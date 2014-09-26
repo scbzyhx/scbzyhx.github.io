@@ -1,0 +1,23 @@
+# Dependencies
+markdown:         redcarpet
+pygments:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            Danish Khan
+tagline:
+description:
+url:              http://danishkhan.org
+
+author:
+  name:           'Danish Khan'
+  url:            https://twitter.com/danishkhan
+
+paginate:         5
+
+# Custom vars
+
+github:
+  repo:          https://github.com/danishkhan
