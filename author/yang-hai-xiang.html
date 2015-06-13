@@ -49,6 +49,9 @@ YANG            </a>
                         <li >
                             <a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a>
                         </li>
+                        <li >
+                            <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a>
+                        </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://scbzyhx.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
@@ -63,6 +66,30 @@ YANG            </a>
     <div class="row">
         <div class="col-sm-9">
 
+            <article>
+                <h2><a href="http://scbzyhx.github.io/swap-trap.html">Swap 函数的坑</a></h2>
+                <div class="summary"><p>昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。</p>
+<p>在交换两个变量的值的时候，用一个中间变量总感觉比较　Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败：</p>
+<div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
+[2]        a = a ^ b;
+[3]        b = a ^ b;
+[4]        a = a ^ b;
+[5]    }
+</pre></div>
+
+
+<p>大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。</p>
+<p>其实非常的简单，可以看成如下：</p>
+<div class="highlight"><pre>b = (a^b)^b = a;
+a = (a^b)^a = b;
+</pre></div>
+
+
+<p>这代码很简单啊 ...</p>
+                    <a class="btn btn-default btn-xs" href="http://scbzyhx.github.io/swap-trap.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
             <article>
                 <h2><a href="http://scbzyhx.github.io/lua-trans.html">Lua 教程</a></h2>
                 <div class="summary"><h1>Lua 教程</h1>
@@ -114,13 +141,18 @@ YANG            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/awk.html">
-                            awk
+                        <a href="http://scbzyhx.github.io/tag/lua.html">
+                            Lua
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/lua.html">
-                            Lua
+                        <a href="http://scbzyhx.github.io/tag/c.html">
+                            C++，
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://scbzyhx.github.io/tag/awk.html">
+                            awk
                         </a>
                     </li>
                 </ul>
