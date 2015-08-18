@@ -5,30 +5,37 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://scbzyhx.github.io/</loc>
-<lastmod>2015-06-21T14:52:15-00:00</lastmod>
+<lastmod>2015-08-18T15:00:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://scbzyhx.github.io/archives.html</loc>
-<lastmod>2015-06-21T14:52:15-00:00</lastmod>
+<lastmod>2015-08-18T15:00:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://scbzyhx.github.io/tags.html</loc>
-<lastmod>2015-06-21T14:52:15-00:00</lastmod>
+<lastmod>2015-08-18T15:00:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://scbzyhx.github.io/categories.html</loc>
-<lastmod>2015-06-21T14:52:15-00:00</lastmod>
+<lastmod>2015-08-18T15:00:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://scbzyhx.github.io/ryu_ryuapp.html</loc>
+<lastmod>2015-07-27T00:00:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 
 <url>
@@ -68,21 +75,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://scbzyhx.github.io/category/ri-zhi.html</loc>
-<lastmod>2015-06-13T00:00:00+08:06</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://scbzyhx.github.io/tag/ant.html</loc>
-<lastmod>2015-06-21T00:00:00+08:06</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://scbzyhx.github.io/tag/awk.html</loc>
-<lastmod>2015-05-13T00:00:00+08:06</lastmod>
+<lastmod>2015-07-27T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -95,7 +88,21 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://scbzyhx.github.io/tag/openflow.html</loc>
+<lastmod>2015-07-27T00:00:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://scbzyhx.github.io/tag/fan-yi.html</loc>
+<lastmod>2015-06-21T00:00:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://scbzyhx.github.io/tag/ant.html</loc>
 <lastmod>2015-06-21T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -109,8 +116,29 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://scbzyhx.github.io/tag/awk.html</loc>
+<lastmod>2015-05-13T00:00:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://scbzyhx.github.io/tag/sdn.html</loc>
+<lastmod>2015-07-27T00:00:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://scbzyhx.github.io/tag/ryu.html</loc>
+<lastmod>2015-07-27T00:00:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://scbzyhx.github.io/author/yang-hai-xiang.html</loc>
-<lastmod>2015-06-21T00:00:00+08:06</lastmod>
+<lastmod>2015-07-27T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
