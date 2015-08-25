@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>A Pelican Blog</title><link>/</link><description></description><atom:link href="/feeds%5Cyang-hai-xiang.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 27 Jul 2015 00:00:00 +0000</lastBuildDate><item><title>Ryu 源码分析之 RyuApp</title><link>/ryu_ryuapp.html</link><description>&lt;p&gt;本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网&lt;a href="http://osrg.github.io/ryu/"&gt;文档&lt;/a&gt;。  &lt;/p&gt;
+&lt;h1&gt;核心对象 RyuApp&lt;/h1&gt;
+&lt;p&gt;每一个学习的 Ryu 的用户，接触到的第一个东西就是 app_manager.RyuApp 类。因为你实现一个应用时，手册都会告诉你需要去继承这个类，然后再实现一些方法等等。由此也可见，这其实是一个 Ryu 中一个非常核心的概念。它到底是什么呢？简单来说，默认情况下每一个 RyuApp 实例（为了方便，我们将 RyuApp 子类的实例也称之为 RyuApp 的实例，下同）对应一个 greenlet 线程 (这是一种非常轻量级的用户态线程)。如果你自己额外创建新的线程则会存在一个 RyuApp 实例有多个线程的情况。而这些线程的上下文，即运行环境，就是这个这个 RyuApp 对象了。也就是说，一个应用会对应一个 RyuApp 实例，一个线程。其中实例提供上下文环境，而这个线程对应的函数就是 RyuApp 的 _event_loop 函数（稍后会分析）。  &lt;/p&gt;
+&lt;h1&gt;启动过程概要&lt;/h1&gt;
+&lt;p&gt;如果你用过 set_ev_cls 就会明白，线程之间或者说应用之间通过事件进行通信，那么这些事件到底是怎么进行路由的呢，即如何放到各 RyuApp 实现的事件队列中的呢，如何建立这种联系呢（至少写代码的时候不太容易明白），就需要先大致了解一下怎么么启动的了。启动的详细过程，在后面的博客会详解，这儿只说个大概内容。  &lt;/p&gt;
+&lt;p&gt;其实，所有的多线程应用都是从单线程开始的， Ryu 也不例外。 使用 ryu-manger app.py 启动应用后，  &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主线程先通过 app.py 获得所依赖的所有其它类（您应该已经知道了，可通过 _CONTEXTS 获得）。  &lt;/li&gt;
+&lt;li&gt;再创建所有这些类的对象并初始化，并将对象保存起来，创建对象字典。  &lt;/li&gt;
+&lt;li&gt;接下来用该字典初始化 app.py 中的的应用。  &lt;/li&gt;
+&lt;li&gt;将所有的对象都创建完毕后，建立对象这些对象之间的联系，比如 A 接收 B 发送的事件，则 A B 之前必然需要某些机制来关联起来。这种关联就是在这个阶段完成的。  &lt;/li&gt;
+&lt;li&gt;最后，再启动各对象对应的线程。然后整个应用就启动起来了。  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;其实这里面最难理解的应该就属于如何建立这些线程之间复杂的关系了。 要想了解这个复杂的关联，我们需要分析一下 RyuApp 的源代码，下面我将对比着源代码来说明这个过程。  &lt;/p&gt;
+&lt;h1&gt;RyuApp 源代码剖析&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;RyuApp&lt;/span&gt;(&lt;span class="n"&gt;object&lt;/span&gt;):
+
+    &lt;span class="n"&gt;_CONTEXTS&lt;/span&gt; = {}
+
+   &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;   前面已经说了，_CONTEXTS 就是解决依赖的。所有位于在 _CONTEXTS 类都会相应的生成一个对象。将这些对象建立一个类似于 _CONTEXTS 的字典，只是将这个对象字典中的值由类换成了相应的类的实例。而这个实例字典会用于初始化本实例。&lt;/span&gt;
+&lt;span class="s"&gt;   例如：&lt;/span&gt;
+&lt;span class="s"&gt;          _CONTEXTS = {&lt;/span&gt;
+&lt;span class="s"&gt;            &amp;#39;network&amp;#39;: network.Network&lt;/span&gt;
+&lt;span class="s"&gt;        }&lt;/span&gt;
+&lt;span class="s"&gt;        def __init__(self, *args, *kwargs):&lt;/span&gt;
+&lt;span class="s"&gt;            self.network = kwargs[&amp;#39;network&amp;#39;]&lt;/span&gt;
+&lt;span class="s"&gt;    会生成一个 Network 类的实例。而 kwargs 实则为 {&amp;quot;&lt;/span&gt;&lt;span class="n"&gt;network&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;:Netwok_instance}&lt;/span&gt;
+&lt;span class="s"&gt;   &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;_EVENTS&lt;/span&gt; = []
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    这个列表存放，本类会产生的事件的类。如果这个类会产生 A 类事件，则将该事件放到 _EVENTS 中。&lt;/span&gt;
+&lt;span class="s"&gt;   这样做的目的在于，如果一个类 Receiver 对这个事件 A 感兴趣，在建立联系的阶段（上面说的第4阶段）主线程就依据 _EVENTS 将 Receiver 的实例注册到本实例中。 这个过程在启动过程中可以看到。 &lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;OFP_VERSIONS&lt;/span&gt; = &lt;span class="n"&gt;None&lt;/span&gt;
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    本应用支持的 OpenFlow 版本号，在启动阶段会用到。默认支持所有版本。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="nv"&gt;@classmethod&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;context_iteritems&lt;/span&gt;(&lt;span class="n"&gt;cls&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Return iterator over the (key, contxt class) of application context&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;iter&lt;/span&gt;(&lt;span class="n"&gt;cls&lt;/span&gt;.&lt;span class="n"&gt;_CONTEXTS&lt;/span&gt;.&lt;span class="n"&gt;items&lt;/span&gt;())
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    前面说到， _CONTEXTS 解决应用依赖的问题，这个类方法用于获得 _CONTEXTS&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, *&lt;span class="n"&gt;_args&lt;/span&gt;, **&lt;span class="n"&gt;_kwargs&lt;/span&gt;):
+        &lt;span class="n"&gt;super&lt;/span&gt;(&lt;span class="n"&gt;RyuApp&lt;/span&gt;, &lt;span class="k"&gt;self&lt;/span&gt;).&lt;span class="n"&gt;__init__&lt;/span&gt;()
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;.&lt;span class="n"&gt;__name__&lt;/span&gt;    &lt;span class="c-Singleline"&gt;#本应用的名称，是全局唯一的，可以通过名称来查找实例。如果你想直接调用实现的方法时，可以这么干。&lt;/span&gt;
+
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt; = {}        &lt;span class="c-Singleline"&gt;# ev_cls -&amp;gt; handlers:list  # 事件处理函数字典，事件类到处理函数的映射。 _event_loop 中对每个事件都从这个数据结构中查找相应的处理函数并调用。&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;observers&lt;/span&gt; = {}     &lt;span class="c-Singleline"&gt;# ev_cls -&amp;gt; observer-name -&amp;gt; states:set  #这个对应存储哪些实例会对本实例的产生的事件感兴趣，则相应的存储于此 observers 中。&lt;/span&gt;
+
+        &lt;span class="c-Singleline"&gt;#前面的个数据结构就解决了应用之间相互关联的问题， 如果 A 对应 B 的某个事件感兴趣，则 B 就会出现在 A 的 observers 中，而 B 中处理事件的函数则在 B 自己的 event_handler 中。&lt;/span&gt;
+
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;threads&lt;/span&gt; = []     &lt;span class="c-Singleline"&gt;#存储本应用启动的 greenlet 线程，默认情况下只有 _event_loop 对应的线程。当然可以另外启动线程。 &lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;events&lt;/span&gt; = &lt;span class="n"&gt;hub&lt;/span&gt;.&lt;span class="n"&gt;Queue&lt;/span&gt;(&lt;span class="mi"&gt;128&lt;/span&gt;)  &lt;span class="c-Singleline"&gt;#这个对列存放发送至本实例的所有事件。&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;hasattr&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;, &lt;span class="s"&gt;&amp;#39;LOGGER_NAME&amp;#39;&lt;/span&gt;):  &lt;span class="c-Singleline"&gt;# 日志记录&lt;/span&gt;
+            &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;logger&lt;/span&gt; = &lt;span class="n"&gt;logging&lt;/span&gt;.&lt;span class="n"&gt;getLogger&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;.&lt;span class="n"&gt;LOGGER_NAME&lt;/span&gt;)
+        &lt;span class="n"&gt;else:&lt;/span&gt;
+            &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;logger&lt;/span&gt; = &lt;span class="n"&gt;logging&lt;/span&gt;.&lt;span class="n"&gt;getLogger&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;CONF&lt;/span&gt; = &lt;span class="n"&gt;cfg&lt;/span&gt;.&lt;span class="n"&gt;CONF&lt;/span&gt;  &lt;span class="c-Singleline"&gt;# 全局配置，&lt;/span&gt;
+
+        &lt;span class="c-Singleline"&gt;# prevent accidental creation of instances of this class outside RyuApp&lt;/span&gt;
+        &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;_EventThreadStop&lt;/span&gt;(&lt;span class="n"&gt;event&lt;/span&gt;.&lt;span class="n"&gt;EventBase&lt;/span&gt;):   &lt;span class="c-Singleline"&gt;#这个事件内部使用，用于通知线程终止。在 stop 方法中会用到。&lt;/span&gt;
+            &lt;span class="nb"&gt;pass&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;_event_stop&lt;/span&gt; = &lt;span class="n"&gt;_EventThreadStop&lt;/span&gt;()
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;is_active&lt;/span&gt; = &lt;span class="nb"&gt;True&lt;/span&gt;    &lt;span class="c-Singleline"&gt;# 标识线程是否结束。&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):  &lt;span class="c-Singleline"&gt;##此函数启动线程， 可以看到对应的函数为 _event_loop，这个函数不停地处理到达的事件。&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Hook that is called after startup initialization is done.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;threads&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;hub&lt;/span&gt;.&lt;span class="n"&gt;spawn&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;_event_loop&lt;/span&gt;))
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;stop&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;is_active&lt;/span&gt; = &lt;span class="nb"&gt;False&lt;/span&gt;
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;_send_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;_event_stop&lt;/span&gt;, &lt;span class="n"&gt;None&lt;/span&gt;)
+        &lt;span class="n"&gt;hub&lt;/span&gt;.&lt;span class="n"&gt;joinall&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;threads&lt;/span&gt;)
+   &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;   结束线程，可以看到首先将，is_active 设置为 false, 再发送一个结束事件。 &lt;/span&gt;
+&lt;span class="s"&gt;   &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;register_handler&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="n"&gt;handler&lt;/span&gt;):
+        &lt;span class="n"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;callable&lt;/span&gt;(&lt;span class="n"&gt;handler&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;.&lt;span class="n"&gt;setdefault&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, [])
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;[&lt;span class="n"&gt;ev_cls&lt;/span&gt;].&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;handler&lt;/span&gt;)
+   &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;   注册事件处理器，handler 即注册的处理函数（对其进行了一些包装）。_event_loop 线程根据这个 event_handler 字典处理到达的事件。&lt;/span&gt;
+&lt;span class="s"&gt;   &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unregister_handler&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="n"&gt;handler&lt;/span&gt;):
+        &lt;span class="n"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;callable&lt;/span&gt;(&lt;span class="n"&gt;handler&lt;/span&gt;)
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;[&lt;span class="n"&gt;ev_cls&lt;/span&gt;].&lt;span class="n"&gt;remove&lt;/span&gt;(&lt;span class="n"&gt;handler&lt;/span&gt;)
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;[&lt;span class="n"&gt;ev_cls&lt;/span&gt;]:
+            &lt;span class="n"&gt;del&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;[&lt;span class="n"&gt;ev_cls&lt;/span&gt;]
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    取消注册&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;register_observer&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;states&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+        &lt;span class="n"&gt;states&lt;/span&gt; = &lt;span class="n"&gt;states&lt;/span&gt; &lt;span class="o"&gt;or&lt;/span&gt; &lt;span class="n"&gt;set&lt;/span&gt;()
+        &lt;span class="n"&gt;ev_cls_observers&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="n"&gt;setdefault&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, {})
+        &lt;span class="n"&gt;ev_cls_observers&lt;/span&gt;.&lt;span class="n"&gt;setdefault&lt;/span&gt;(&lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;set&lt;/span&gt;()).&lt;span class="n"&gt;update&lt;/span&gt;(&lt;span class="n"&gt;states&lt;/span&gt;)
+
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    这个函数用于声明告诉本应用，其它某些应用对本应用产生的某些事件感兴趣。在此处注册后，本应用产生事件时，就会将事件消息发送至那些感兴趣的应用的事件队列中。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unregister_observer&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;):
+        &lt;span class="n"&gt;observers&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="n"&gt;get&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, {})
+        &lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="nb"&gt;pop&lt;/span&gt;(&lt;span class="nb"&gt;name&lt;/span&gt;)
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unregister_observer_all_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;):
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;observers&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="nb"&gt;values&lt;/span&gt;():
+            &lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="nb"&gt;pop&lt;/span&gt;(&lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;None&lt;/span&gt;)
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;observe_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="n"&gt;states&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+        &lt;span class="n"&gt;brick&lt;/span&gt; = &lt;span class="n"&gt;_lookup_service_brick_by_ev_cls&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;)
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;brick&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;None:&lt;/span&gt;
+            &lt;span class="n"&gt;brick&lt;/span&gt;.&lt;span class="n"&gt;register_observer&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;states&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    如果本应用对某个事件感兴趣，那么就可以调用这个函数将其注册到产生该事件的应用中。&lt;/span&gt;
+&lt;span class="s"&gt;    其中 _lookup_service_brick_by_ev_cls 函数会在全局 SERVICE_BRICKS 数组中查找产生指定事件消息的应用。&lt;/span&gt;
+&lt;span class="s"&gt;    SERVICE_BRICKS 数组存储了启动的所有的应用。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unobserve_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev_cls&lt;/span&gt;):
+        &lt;span class="n"&gt;brick&lt;/span&gt; = &lt;span class="n"&gt;_lookup_service_brick_by_ev_cls&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;)
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;brick&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;None:&lt;/span&gt;
+            &lt;span class="n"&gt;brick&lt;/span&gt;.&lt;span class="n"&gt;unregister_observer&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;)
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_handlers&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;Returns a list of handlers for the specific event.&lt;/span&gt;
+&lt;span class="s"&gt;        :param ev: The event to handle.&lt;/span&gt;
+&lt;span class="s"&gt;        :param state: The current state. (&amp;quot;&lt;/span&gt;&lt;span class="n"&gt;dispatcher&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;)&lt;/span&gt;
+&lt;span class="s"&gt;                      If None is given, returns all handlers for the event.&lt;/span&gt;
+&lt;span class="s"&gt;                      Otherwise, returns only handlers that are interested&lt;/span&gt;
+&lt;span class="s"&gt;                      in the specified state.&lt;/span&gt;
+&lt;span class="s"&gt;                      The default is None.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;ev_cls&lt;/span&gt; = &lt;span class="n"&gt;ev&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;
+        &lt;span class="n"&gt;handlers&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;event_handlers&lt;/span&gt;.&lt;span class="n"&gt;get&lt;/span&gt;(&lt;span class="n"&gt;ev_cls&lt;/span&gt;, [])
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;None:&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;handlers&lt;/span&gt;
+
+        &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;(&lt;span class="n"&gt;h&lt;/span&gt;):
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;hasattr&lt;/span&gt;(&lt;span class="n"&gt;h&lt;/span&gt;, &lt;span class="s"&gt;&amp;#39;callers&amp;#39;&lt;/span&gt;) &lt;span class="o"&gt;or&lt;/span&gt; &lt;span class="n"&gt;ev_cls&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt;.&lt;span class="n"&gt;callers:&lt;/span&gt;
+                &lt;span class="c-Singleline"&gt;# dynamically registered handlers does not have&lt;/span&gt;
+                &lt;span class="c-Singleline"&gt;# h.callers element for the event.&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;True&lt;/span&gt;
+            &lt;span class="n"&gt;states&lt;/span&gt; = &lt;span class="n"&gt;h&lt;/span&gt;.&lt;span class="n"&gt;callers&lt;/span&gt;[&lt;span class="n"&gt;ev_cls&lt;/span&gt;].&lt;span class="n"&gt;dispatchers&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;states:&lt;/span&gt;
+                &lt;span class="c-Singleline"&gt;# empty states means all states&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;True&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;
+
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;filter&lt;/span&gt;(&lt;span class="n"&gt;test&lt;/span&gt;, &lt;span class="n"&gt;handlers&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    查找并返回事件的处理函数&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_observers&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;):
+        &lt;span class="n"&gt;observers&lt;/span&gt; = []
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;, &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="n"&gt;get&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;, {}).&lt;span class="n"&gt;items&lt;/span&gt;():
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; &lt;span class="o"&gt;or&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="o"&gt;or&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;v:&lt;/span&gt;
+                &lt;span class="n"&gt;observers&lt;/span&gt;.&lt;span class="n"&gt;append&lt;/span&gt;(&lt;span class="n"&gt;k&lt;/span&gt;)
+
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;observers&lt;/span&gt;
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    返回对指定事件（本应用产生的）感兴趣的其它应用。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;send_request&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;req&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Make a synchronous request.&lt;/span&gt;
+&lt;span class="s"&gt;        Set req.sync to True, send it to a Ryu application specified by&lt;/span&gt;
+&lt;span class="s"&gt;        req.dst, and block until receiving a reply.&lt;/span&gt;
+&lt;span class="s"&gt;        Returns the received reply.&lt;/span&gt;
+&lt;span class="s"&gt;        The argument should be an instance of EventRequestBase.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+        &lt;span class="n"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;isinstance&lt;/span&gt;(&lt;span class="n"&gt;req&lt;/span&gt;, &lt;span class="n"&gt;EventRequestBase&lt;/span&gt;)
+        &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;sync&lt;/span&gt; = &lt;span class="nb"&gt;True&lt;/span&gt;
+        &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;reply_q&lt;/span&gt; = &lt;span class="n"&gt;hub&lt;/span&gt;.&lt;span class="n"&gt;Queue&lt;/span&gt;()
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;send_event&lt;/span&gt;(&lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;dst&lt;/span&gt;, &lt;span class="n"&gt;req&lt;/span&gt;)
+        &lt;span class="c-Singleline"&gt;# going to sleep for the reply&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;reply_q&lt;/span&gt;.&lt;span class="n"&gt;get&lt;/span&gt;()
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    同步发送请求。它将请求发送到 req.dst 指定的应用，并阻塞到收到返回。其它它本质也是用事件消息实现的，不过它主动睡眠，等待被处理后（reply_q 中有了数据），再从 get 函数的阻塞处继续执行。&lt;/span&gt;
+&lt;span class="s"&gt;   &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;_event_loop&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;is_active&lt;/span&gt; &lt;span class="o"&gt;or&lt;/span&gt; &lt;span class="nb"&gt;not&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;events&lt;/span&gt;.&lt;span class="n"&gt;empty&lt;/span&gt;():
+            &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;events&lt;/span&gt;.&lt;span class="n"&gt;get&lt;/span&gt;()
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt; == &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;_event_stop:&lt;/span&gt;
+                &lt;span class="k"&gt;continue&lt;/span&gt;
+            &lt;span class="n"&gt;handlers&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;get_handlers&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;)
+            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;handler&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;handlers:&lt;/span&gt;
+                &lt;span class="n"&gt;handler&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    应用线程的主体部分。其非常简单。即不停地从队列中取出事件消息，将查找相应的处理函数，再调用算出函数。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;_send_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;):
+        &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;events&lt;/span&gt;.&lt;span class="n"&gt;put&lt;/span&gt;((&lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;))
+
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    向自己的队列中发送事件消息，停止消息应该用到了它。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;send_event&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Send the specified event to the RyuApp instance specified by name.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;name&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;SERVICE_BRICKS:&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;isinstance&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="n"&gt;EventRequestBase&lt;/span&gt;):
+                &lt;span class="n"&gt;ev&lt;/span&gt;.&lt;span class="n"&gt;src&lt;/span&gt; = &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;
+            &lt;span class="n"&gt;LOG&lt;/span&gt;.&lt;span class="n"&gt;debug&lt;/span&gt;(&lt;span class="s"&gt;&amp;quot;EVENT %s-&amp;gt;%s %s&amp;quot;&lt;/span&gt;,
+                      &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;.&lt;span class="n"&gt;__name__&lt;/span&gt;)
+            &lt;span class="n"&gt;SERVICE_BRICKS&lt;/span&gt;[&lt;span class="nb"&gt;name&lt;/span&gt;].&lt;span class="n"&gt;_send_event&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;)
+        &lt;span class="n"&gt;else:&lt;/span&gt;
+            &lt;span class="n"&gt;LOG&lt;/span&gt;.&lt;span class="n"&gt;debug&lt;/span&gt;(&lt;span class="s"&gt;&amp;quot;EVENT LOST %s-&amp;gt;%s %s&amp;quot;&lt;/span&gt;,
+                      &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="nb"&gt;name&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;.&lt;span class="n"&gt;__class__&lt;/span&gt;.&lt;span class="n"&gt;__name__&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    向指定的应用（name）发送事件消息。应用由名称指定，应用的实例从全局变量 SERVICE_BRICK 查找所得，然后直接将消息发送到该应用的消息队列中。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;       
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;send_event_to_observers&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Send the specified event to all observers of this RyuApp.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;observer&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;get_observers&lt;/span&gt;(&lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;):
+            &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;send_event&lt;/span&gt;(&lt;span class="n"&gt;observer&lt;/span&gt;, &lt;span class="n"&gt;ev&lt;/span&gt;, &lt;span class="k"&gt;state&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    将事件消息发送到那些对其感兴趣的应用的队列中。所谓的感兴趣，即指调用 register_observer 注册过的应用。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;reply_to_request&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;req&lt;/span&gt;, &lt;span class="n"&gt;rep&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        Send a reply for a synchronous request sent by send_request.&lt;/span&gt;
+&lt;span class="s"&gt;        The first argument should be an instance of EventRequestBase.&lt;/span&gt;
+&lt;span class="s"&gt;        The second argument should be an instance of EventReplyBase.&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+        &lt;span class="n"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;isinstance&lt;/span&gt;(&lt;span class="n"&gt;req&lt;/span&gt;, &lt;span class="n"&gt;EventRequestBase&lt;/span&gt;)
+        &lt;span class="n"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;isinstance&lt;/span&gt;(&lt;span class="n"&gt;rep&lt;/span&gt;, &lt;span class="n"&gt;EventReplyBase&lt;/span&gt;)
+        &lt;span class="n"&gt;rep&lt;/span&gt;.&lt;span class="n"&gt;dst&lt;/span&gt; = &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;src&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;sync:&lt;/span&gt;
+            &lt;span class="n"&gt;req&lt;/span&gt;.&lt;span class="n"&gt;reply_q&lt;/span&gt;.&lt;span class="n"&gt;put&lt;/span&gt;(&lt;span class="n"&gt;rep&lt;/span&gt;)
+        &lt;span class="n"&gt;else:&lt;/span&gt;
+            &lt;span class="k"&gt;self&lt;/span&gt;.&lt;span class="n"&gt;send_event&lt;/span&gt;(&lt;span class="n"&gt;rep&lt;/span&gt;.&lt;span class="n"&gt;dst&lt;/span&gt;, &lt;span class="n"&gt;rep&lt;/span&gt;)
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    处理同步请求，往reply_q 队列中放入数据即可唤醒 send_reqeust。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="nb"&gt;close&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+        &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;        teardown method.&lt;/span&gt;
+&lt;span class="s"&gt;        The method name, close, is chosen for python context manager&lt;/span&gt;
+&lt;span class="s"&gt;        &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+        &lt;span class="nb"&gt;pass&lt;/span&gt;
+    &lt;span class="s"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;    本来应该是打算终止本线程的，不过不知道为什么根本没有用到。目前 Ryu 的终止还是相当的粗暴，只能直接使用 Ctrl+C。&lt;/span&gt;
+&lt;span class="s"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上面就是 RyuApp 类的代码部分了。所有应用之间的交互过程其实也不是太复杂，如果 A 应用产生事件 a，而 B 应用对事件 a 感兴趣，希望 A 产生该事件的时候，通知B。那么 B 在初始化时就会使用 register_observer 在 A 处注册，以告诉 A，B 对 A 的 a 事件感兴趣，那么 A 产生该事件消息时，就会调用 send_event_to_observer 将 a 放到 B 的消息队列中。 B 中再处理消息并调用相应的消息处理函数就 OK 了。这样就实现了各应用之间的通信了。&lt;/p&gt;
+&lt;p&gt;那么还剩下两个问题了：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;我们从来没有调用  register_observer 去显式注册，那么这种注册到底是什么时候完成的呢？&lt;/li&gt;
+&lt;li&gt;我们并没有使用 register_handler 注册一个事件消息处理函数，那么这个又是什么时候完成的呢？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这两个问题与应用加载的过程十分密切，所以我们需留在下一篇博客解释初始化过程的时候再来讲解。&lt;/p&gt;
+&lt;p&gt;预告：消息处理函数的注册与 set_ev_cls 与 set_ev_handler 有十分密切的关系。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">杨海祥</dc:creator><pubDate>Mon, 27 Jul 2015 00:00:00 +0000</pubDate><guid>tag:,2015-07-27:ryu_ryuapp.html</guid><category>SDN</category><category>Ryu</category><category>OpenFlow</category></item><item><title>Ant 教程</title><link>/ant-trans.html</link><description>&lt;h1&gt;Apache Ant 教程&lt;/h1&gt;
+&lt;p&gt;Apache Ant 是由 java 语言开发的工具，由 Apache 软件基金会所提供。 Apache Ant 的配置文件写成 XML 容易维护和书写，而且结构很清晰。&lt;/p&gt;
+&lt;p&gt;这个教程将以简单的方式会向你展示如何利用 Apache ANT 来自动地构建和部署过程。在完成本教程的学习以后，你将会发现你已经具备下一阶段学习 Apache Ant 中等水平的专业知识 。&lt;/p&gt;
+&lt;h2&gt;读者&lt;/h2&gt;
+&lt;p&gt;这个教程有助于帮助初学者理解 Apache Ant 的基础知识，并用它来自动地构建和部署的过程。&lt;/p&gt;
+&lt;h2&gt;预备知识&lt;/h2&gt;
+&lt;p&gt;对于学习这个教程，我们假设读者已经具备了 java 或者其他开发语言关于软件开发的基础知识。如果你已经接触过一些软件构建和部署过程，那么对于学习这个教程将会有一定的帮助。  &lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/ant"&gt;https://github.com/scbzyhx/lua&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;英文地址： &lt;a href="http://www.tutorialspoint.com/ant/index.htm"&gt;http://www.tutorialspoint.com/ant/index.htm&lt;/a&gt; &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">杨海祥</dc:creator><pubDate>Sun, 21 Jun 2015 00:00:00 +0000</pubDate><guid>tag:,2015-06-21:ant-trans.html</guid><category>翻译</category><category>Ant</category></item><item><title>Swap 函数的坑</title><link>/swap-trap.html</link><description>&lt;p&gt;昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。&lt;/p&gt;
+&lt;p&gt;在交换两个变量的值的时候，用一个中间变量总感觉比较　Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;[1]    void swap(int &amp;amp;a, int &amp;amp;b) {
+[2]        a = a ^ b;
+[3]        b = a ^ b;
+[4]        a = a ^ b;
+[5]    }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。&lt;/p&gt;
+&lt;p&gt;其实非常的简单，可以看成如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;b = (a^b)^b = a;
+a = (a^b)^a = b;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这代码很简单啊，没什么错啊，我当时就是这样想的。但是等到我使用它的时候，调试过程中发现了神奇的一幕。就 a,b 两个值相等（至少我当时认为是相等）时，a 和 b 就都变成了 0。难道相等交换后不应该相等吗？难道这个算法有问题，我自己仔细手算了一遍。发现没问题啊，即使 a b 值相等了，最终结果也应该是对的啊,简单没天理了。  &lt;/p&gt;
+&lt;p&gt;中间经历过各种猜测后，我最终决定单步输出,看一下这个磨人的小妖精到底在哪儿。所以，我在第2，3，4 步之前都打结果输出出来。结果发现执行完第二步后，a,b 都变成了 0。当时我就懵逼了，真 TM 神奇，难道编译器有问题啊。天啦，我竟然发现 g++ 编译器有问题。果然，大神们是不会出问题的，问题只可能出现在自己的身上。  &lt;/p&gt;
+&lt;p&gt;我去仔细看了一下汇编代码，发现在取变量的值的时候，两个变量的地址值竟然是相同的，此刻我才幡然醒悟。原来 a,b 引用的是同一个变量，所以一异或后，两个变量全都变成了 0， 那后面无论如何都得不到正确的结果了。p.s 我是用 swap 交换数组变量的值，所以没发现 swap 的同一个变量。幸好，最后还是发现了问题出在哪儿，吃一堑长一智,所以正确的代码可以这样写：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;[1]    void swap(int &amp;amp;a, int &amp;amp;b) {
+[2]        if (a == b) return;
+[3]        a = a ^ b;
+[4]        b = a ^ b;
+[5]        a = a ^ b;
+[6]    }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;不知道有没有更漂亮的代码。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">杨海祥</dc:creator><pubDate>Sat, 13 Jun 2015 00:00:00 +0000</pubDate><guid>tag:,2015-06-13:swap-trap.html</guid><category>C++，</category></item><item><title>Lua 教程</title><link>/lua-trans.html</link><description>&lt;h1&gt;Lua 教程&lt;/h1&gt;
+&lt;h2&gt;概述&lt;/h2&gt;
+&lt;p&gt;Lua 是用 C 语言开发的可扩展的轻量级编程语言。它起源于 1993 年由 Roberto lerusalimschy,Luiz Henrique de Figueiredo 与 Waddemar Celes 领导的一个内部项目。
+设计者的初衷是希望 Lua 可以成为一款整合 C 语言代码以及其它传统语言代码的软件。这种整合会带来很多好处，它让你不需要重复做 C 语言已经做的很好的工作，而专注于提供那些 C 语言不擅长的特性：提供更高的抽象（离硬件更远）、动态结构、无冗余、易于测试与调试。为了提供这些特性，Lua 提供了安全的环境、动态内存管理，以及擅长处理字符串和其它动态大小数据结构的工具。&lt;/p&gt;
+&lt;h2&gt;特点&lt;/h2&gt;
+&lt;p&gt;Lua 有着许多自身的特点使得它与其它编程语言不同。主要包括：&lt;br /&gt;
+&lt;ul&gt;
+&lt;li&gt;可扩展性&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;简单&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;高效&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;跨平台&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;自由与开放&lt;/li&gt;&lt;br /&gt;
+&lt;/ul&gt;  &lt;/p&gt;
+&lt;h2&gt;应用场景&lt;/h2&gt;
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;游戏开发&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;开发单机应用&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;网站开发&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;扩展数据库或者为数据库开发插件，比如，MySQL 代理或 MySQL WorkBench&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;开发安全系统，如入侵检测系统（IDS）&lt;/li&gt;&lt;br /&gt;
+&lt;/ul&gt;  &lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/lua"&gt;https://github.com/scbzyhx/lua&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;官方英文原版：&lt;a href = "http://www.tutorialspoint.com/lua/index.htm"&gt;http://www.tutorialspoint.com/lua/index.htm &lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">杨海祥</dc:creator><pubDate>Wed, 27 May 2015 00:00:00 +0000</pubDate><guid>tag:,2015-05-27:lua-trans.html</guid><category>翻译</category><category>Lua</category></item><item><title>AWK 教程</title><link>/awk-trans.html</link><description>&lt;h1&gt;AWK 教程&lt;/h1&gt;
+&lt;p&gt;该教程是为极客学院翻译的项目。&lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/awk"&gt;https://github.com/scbzyhx/awk&lt;/a&gt; 或者  &lt;a href = "https://github.com/wenquan0hf/awk "&gt;https://github.com/wenquan0hf/awk &lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;官方英文原版：&lt;a href = "http://www.tutorialspoint.com/awk/awk_overview.htm"&gt;http://www.tutorialspoint.com/awk/awk_overview.htm &lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">杨海祥</dc:creator><pubDate>Wed, 13 May 2015 00:00:00 +0000</pubDate><guid>tag:,2015-05-13:awk-trans.html</guid><category>翻译</category><category>awk</category></item></channel></rss>

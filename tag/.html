@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>Swap 函数的坑 - YANG</title>
+    <title> - YANG</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,21 +10,16 @@
 
 
 
-<link rel="canonical" href="http://scbzyhx.github.io/swap-trap.html">
 
-        <meta name="author" content="杨海祥" />
-        <meta name="keywords" content="C++，" />
-        <meta name="description" content="昨天在刷 Leetcode 的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。 在交换两个变量的值的时候，用一个中间变量总感觉比较 Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败： [1] void swap(int &amp;a, int &amp;b) { [2] a = a ^ b; [3] b = a ^ b; [4] a = a ^ b; [5] } 大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。 其实非常的简单，可以看成如下： b = (a^b)^b = a; a = (a^b)^a = b; 这代码很简单啊 ..." />
+    <meta name="author" content="scbzyhx" />
+    <meta name="keywords" content="" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="YANG" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Swap 函数的坑"/>
-        <meta property="og:url" content="http://scbzyhx.github.io/swap-trap.html"/>
-        <meta property="og:description" content="昨天在刷 Leetcode 的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。 在交换两个变量的值的时候，用一个中间变量总感觉比较 Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败： [1] void swap(int &amp;a, int &amp;b) { [2] a = a ^ b; [3] b = a ^ b; [4] a = a ^ b; [5] } 大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。 其实非常的简单，可以看成如下： b = (a^b)^b = a; a = (a^b)^a = b; 这代码很简单啊 ..."/>
-        <meta property="article:published_time" content="2015-06-13" />
-            <meta property="article:section" content="日志" />
-            <meta property="article:tag" content="C++，" />
-            <meta property="article:author" content="杨海祥" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="YANG"/>
+        <meta property="og:url" content="http://scbzyhx.github.io"/>
+        <meta property="og:description" content="YANG"/>
 
 
     <!-- Bootstrap -->
@@ -55,7 +50,7 @@ YANG            </a>
                         <li >
                             <a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a>
                         </li>
-                        <li class="active">
+                        <li >
                             <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a>
                         </li>
             </ul>
@@ -72,97 +67,15 @@ YANG            </a>
     <div class="row">
         <div class="col-sm-9">
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://scbzyhx.github.io/swap-trap.html"
-                       rel="bookmark"
-                       title="Permalink to Swap 函数的坑">
-                        Swap 函数的坑
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Date</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-06-13T00:00:00+08:00"> 周六 13 六月 2015</time>
-    </span>
-
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://scbzyhx.github.io/tag/c.html">C++，</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://scbzyhx.github.io/ebpf.html">eBPF</a></h2>
+                <div class="summary"><p>几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。  </p>
+<h2>BPF</h2>
+<p>eBPF 起源为 <a href="https://zh.wikipedia.org/wiki/BPF">BPF</a>，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ...</p>
+                    <a class="btn btn-default btn-xs" href="http://scbzyhx.github.io/ebpf.html">more ...</a>
                 </div>
-                <p>昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。</p>
-<p>在交换两个变量的值的时候，用一个中间变量总感觉比较　Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败：</p>
-<div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
-[2]        a = a ^ b;
-[3]        b = a ^ b;
-[4]        a = a ^ b;
-[5]    }
-</pre></div>
-
-
-<p>大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。</p>
-<p>其实非常的简单，可以看成如下：</p>
-<div class="highlight"><pre>b = (a^b)^b = a;
-a = (a^b)^a = b;
-</pre></div>
-
-
-<p>这代码很简单啊，没什么错啊，我当时就是这样想的。但是等到我使用它的时候，调试过程中发现了神奇的一幕。就 a,b 两个值相等（至少我当时认为是相等）时，a 和 b 就都变成了 0。难道相等交换后不应该相等吗？难道这个算法有问题，我自己仔细手算了一遍。发现没问题啊，即使 a b 值相等了，最终结果也应该是对的啊,简单没天理了。  </p>
-<p>中间经历过各种猜测后，我最终决定单步输出,看一下这个磨人的小妖精到底在哪儿。所以，我在第2，3，4 步之前都打结果输出出来。结果发现执行完第二步后，a,b 都变成了 0。当时我就懵逼了，真 TM 神奇，难道编译器有问题啊。天啦，我竟然发现 g++ 编译器有问题。果然，大神们是不会出问题的，问题只可能出现在自己的身上。  </p>
-<p>我去仔细看了一下汇编代码，发现在取变量的值的时候，两个变量的地址值竟然是相同的，此刻我才幡然醒悟。原来 a,b 引用的是同一个变量，所以一异或后，两个变量全都变成了 0， 那后面无论如何都得不到正确的结果了。p.s 我是用 swap 交换数组变量的值，所以没发现 swap 的同一个变量。幸好，最后还是发现了问题出在哪儿，吃一堑长一智,所以正确的代码可以这样写：  </p>
-<div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
-[2]        if (a == b) return;
-[3]        a = a ^ b;
-[4]        b = a ^ b;
-[5]        a = a ^ b;
-[6]    }
-</pre></div>
-
-
-<p>不知道有没有更漂亮的代码。</p>
-            </div>
-            <!-- /.entry-content -->
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'yhx'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'swap-trap';
-                var disqus_url = 'http://scbzyhx.github.io/swap-trap.html';
-
-            var disqus_config = function () {
-                this.language = "zh";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">

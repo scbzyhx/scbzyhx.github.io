@@ -68,6 +68,15 @@ YANG            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://scbzyhx.github.io/ebpf.html">eBPF</a></h2>
+                <div class="summary"><p>几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。  </p>
+<h2>BPF</h2>
+<p>eBPF 起源为 <a href="https://zh.wikipedia.org/wiki/BPF">BPF</a>，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ...</p>
+                    <a class="btn btn-default btn-xs" href="http://scbzyhx.github.io/ebpf.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://scbzyhx.github.io/ryu_ryuapp.html">Ryu 源码分析之 RyuApp</a></h2>
                 <div class="summary"><p>本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网<a href="http://osrg.github.io/ryu/">文档</a>。  </p>
 <h1>核心对象 RyuApp</h1>
@@ -124,13 +133,13 @@ a = (a^b)^a = b;
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/c.html">
-                            C++，
+                        <a href="http://scbzyhx.github.io/tag/awk.html">
+                            awk
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/awk.html">
-                            awk
+                        <a href="http://scbzyhx.github.io/tag/nfv.html">
+                            nfv
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -139,8 +148,18 @@ a = (a^b)^a = b;
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/lua.html">
-                            Lua
+                        <a href="http://scbzyhx.github.io/tag/openflow.html">
+                            OpenFlow
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://scbzyhx.github.io/tag/c.html">
+                            C++，
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://scbzyhx.github.io/tag/.html">
+                            
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -149,13 +168,13 @@ a = (a^b)^a = b;
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/openflow.html">
-                            OpenFlow
+                        <a href="http://scbzyhx.github.io/tag/sdn.html">
+                            SDN
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/sdn.html">
-                            SDN
+                        <a href="http://scbzyhx.github.io/tag/lua.html">
+                            Lua
                         </a>
                     </li>
                 </ul>

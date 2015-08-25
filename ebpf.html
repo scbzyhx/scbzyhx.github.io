@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>Swap 函数的坑 - YANG</title>
+    <title>eBPF - YANG</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,20 +10,21 @@
 
 
 
-<link rel="canonical" href="http://scbzyhx.github.io/swap-trap.html">
+<link rel="canonical" href="http://scbzyhx.github.io/ebpf.html">
 
         <meta name="author" content="杨海祥" />
-        <meta name="keywords" content="C++，" />
-        <meta name="description" content="昨天在刷 Leetcode 的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。 在交换两个变量的值的时候，用一个中间变量总感觉比较 Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败： [1] void swap(int &amp;a, int &amp;b) { [2] a = a ^ b; [3] b = a ^ b; [4] a = a ^ b; [5] } 大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。 其实非常的简单，可以看成如下： b = (a^b)^b = a; a = (a^b)^a = b; 这代码很简单啊 ..." />
+        <meta name="keywords" content="nfv," />
+        <meta name="description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..." />
 
         <meta property="og:site_name" content="YANG" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Swap 函数的坑"/>
-        <meta property="og:url" content="http://scbzyhx.github.io/swap-trap.html"/>
-        <meta property="og:description" content="昨天在刷 Leetcode 的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。 在交换两个变量的值的时候，用一个中间变量总感觉比较 Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败： [1] void swap(int &amp;a, int &amp;b) { [2] a = a ^ b; [3] b = a ^ b; [4] a = a ^ b; [5] } 大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。 其实非常的简单，可以看成如下： b = (a^b)^b = a; a = (a^b)^a = b; 这代码很简单啊 ..."/>
-        <meta property="article:published_time" content="2015-06-13" />
+        <meta property="og:title" content="eBPF"/>
+        <meta property="og:url" content="http://scbzyhx.github.io/ebpf.html"/>
+        <meta property="og:description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..."/>
+        <meta property="article:published_time" content="2015-08-25" />
             <meta property="article:section" content="日志" />
-            <meta property="article:tag" content="C++，" />
+            <meta property="article:tag" content="nfv" />
+            <meta property="article:tag" content="" />
             <meta property="article:author" content="杨海祥" />
 
 
@@ -76,10 +77,10 @@ YANG            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://scbzyhx.github.io/swap-trap.html"
+                    <a href="http://scbzyhx.github.io/ebpf.html"
                        rel="bookmark"
-                       title="Permalink to Swap 函数的坑">
-                        Swap 函数的坑
+                       title="Permalink to eBPF">
+                        eBPF
                     </a>
                 </h1>
             </header>
@@ -89,46 +90,53 @@ YANG            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-06-13T00:00:00+08:00"> 周六 13 六月 2015</time>
+        <i class="fa fa-calendar"></i><time datetime="2015-08-25T00:00:00+08:00"> 周二 25 八月 2015</time>
     </span>
 
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://scbzyhx.github.io/tag/c.html">C++，</a>
+	<a href="http://scbzyhx.github.io/tag/nfv.html">nfv</a>
+        /
+	<a href="http://scbzyhx.github.io/tag/.html"></a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。</p>
-<p>在交换两个变量的值的时候，用一个中间变量总感觉比较　Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败：</p>
-<div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
-[2]        a = a ^ b;
-[3]        b = a ^ b;
-[4]        a = a ^ b;
-[5]    }
-</pre></div>
-
-
-<p>大神看到这段代码可能立马就知道我这个小白错误在哪儿了，如果没有怎么用过这种方法交换变量的值，那么可能没有看出来问题在哪儿。先解释以下这几句代码。</p>
-<p>其实非常的简单，可以看成如下：</p>
-<div class="highlight"><pre>b = (a^b)^b = a;
-a = (a^b)^a = b;
-</pre></div>
-
-
-<p>这代码很简单啊，没什么错啊，我当时就是这样想的。但是等到我使用它的时候，调试过程中发现了神奇的一幕。就 a,b 两个值相等（至少我当时认为是相等）时，a 和 b 就都变成了 0。难道相等交换后不应该相等吗？难道这个算法有问题，我自己仔细手算了一遍。发现没问题啊，即使 a b 值相等了，最终结果也应该是对的啊,简单没天理了。  </p>
-<p>中间经历过各种猜测后，我最终决定单步输出,看一下这个磨人的小妖精到底在哪儿。所以，我在第2，3，4 步之前都打结果输出出来。结果发现执行完第二步后，a,b 都变成了 0。当时我就懵逼了，真 TM 神奇，难道编译器有问题啊。天啦，我竟然发现 g++ 编译器有问题。果然，大神们是不会出问题的，问题只可能出现在自己的身上。  </p>
-<p>我去仔细看了一下汇编代码，发现在取变量的值的时候，两个变量的地址值竟然是相同的，此刻我才幡然醒悟。原来 a,b 引用的是同一个变量，所以一异或后，两个变量全都变成了 0， 那后面无论如何都得不到正确的结果了。p.s 我是用 swap 交换数组变量的值，所以没发现 swap 的同一个变量。幸好，最后还是发现了问题出在哪儿，吃一堑长一智,所以正确的代码可以这样写：  </p>
-<div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
-[2]        if (a == b) return;
-[3]        a = a ^ b;
-[4]        b = a ^ b;
-[5]        a = a ^ b;
-[6]    }
-</pre></div>
-
-
-<p>不知道有没有更漂亮的代码。</p>
+                <p>几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。  </p>
+<h2>BPF</h2>
+<p>eBPF 起源为 <a href="https://zh.wikipedia.org/wiki/BPF">BPF</a>，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load, arithmetic,branch,return,transfer）、10 种寻址模式、16 个 32 位寄存器（内存映射）。程序一般生成一个 bool 值，保留或者丢弃数据包。如果想更多了解 BPF 的细节，可以参考论文 <a href="http://www.tcpdump.org/papers/bpf-usenix93.pdf">The BSD Packet Filter: A New Architecture for User-level Packet Capture</a>。</p>
+<p>使用 BPF 的接口为 setsockopt。参数为 SO_ATTCH_FILTER。指令以数组的方式传递到内核中。</p>
+<p>这种在内核态机制处理数据包的方法可以避免数据从内核到用户态的拷贝，以提高数据的处理速度，但是可能令人担心的是虚拟机的速率。为了提高 BPF，JIT 对其进行了加速。  </p>
+<h2>JIT</h2>
+<p>2011 年时， JIT 被加入到内核以加速 BPF 程序的执行速度。不过，它只是支持 x86_64 系统结构。其思路也是非常的简单，即是尽量将寄存器直接映射为 x86_64 的物理寄存器，将虚拟机指令也尽可能直接地映射机器指令。更多内容可参考：<a href="https://lwn.net/Articles/437981">https://lwn.net/Articles/437981</a>。  </p>
+<h2>eBPF</h2>
+<p>Linux 3.15 开始引入 eBPF。其扩充了 BPF 的功能，丰富了<a href="https://www.kernel.org/doc/Documentation/networking/filter.txt">指令集</a>。</p>
+<ul>
+<li>10 个 64 位寄存器。</li>
+<li>支持函数调用</li>
+<li>指令数增加至 90 条</li>
+<li>所有的指令都在 64 位模式。</li>
+<li>ABI 调用规范：<ul>
+<li>R0 寄存器：返回值（或程序的返回值）</li>
+<li>R1-R5 寄存器：参数</li>
+<li>R6-F9 寄存器：被调用者保存的寄存器</li>
+<li>R10 寄存器：只读帧指针。</li>
+</ul>
+</li>
+<li>增加了 Map ，可以在内核保存数据</li>
+<li>新增加了 bpf() 系统调用</li>
+<li>等等。</li>
+</ul>
+<p>可见，cBPF, JIT 严格算来都不能算作虚拟机，因为它们甚至都不能使用函数调用。而到了 eBPF 后，虚拟机的功能并都更加强大，使得我们对数据包的操作都可以在内核灵活地实现，完全不需要加载重新编译，而且可以在线替换等，灵活性大大增加。数据平面也就变得更加灵活（可以随时改变对每个数据包的处理行为）。</p>
+<p>虽然说到的都是对于网络数据包的处理，但是 eBPF 目前已并只处理网络包了，其总共四个方面：  </p>
+<ul>
+<li>BPF_PROG_TYPE_SOCK_FILTER</li>
+<li>BPF_PROG_TYPE_KPROBE</li>
+<li>BPF_PROG_TYPE_SCHED_CLS</li>
+<li>BPF_PROG_TYPE_SOCK_ACT</li>
+</ul>
+<p>另外三类功能到底是什么可以参考相关的文献。  </p>
+<p>可见，这种虚拟机的机制使得要想改变对网络数据包的处理行为变得非常灵活而且在内核中完成该功能使得性能大大提高（避免从内核到用户态的拷贝）。当然，其安全性等问题也还是非常地重要的，毕竟内核几乎就有了绝对的权限。此内容以后再说。   </p>
             </div>
             <!-- /.entry-content -->
     <hr/>
@@ -140,8 +148,8 @@ a = (a^b)^a = b;
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'yhx'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'swap-trap';
-                var disqus_url = 'http://scbzyhx.github.io/swap-trap.html';
+                    var disqus_identifier = 'ebpf';
+                var disqus_url = 'http://scbzyhx.github.io/ebpf.html';
 
             var disqus_config = function () {
                 this.language = "zh";

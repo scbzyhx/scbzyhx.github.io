@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>A Pelican Blog</title><link href="/" rel="alternate"></link><link href="/feeds%5Cfan-yi.atom.xml" rel="self"></link><id>/</id><updated>2015-06-21T00:00:00+00:00</updated><entry><title>Ant 教程</title><link href="/ant-trans.html" rel="alternate"></link><updated>2015-06-21T00:00:00+00:00</updated><author><name>杨海祥</name></author><id>tag:,2015-06-21:ant-trans.html</id><summary type="html">&lt;h1&gt;Apache Ant 教程&lt;/h1&gt;
+&lt;p&gt;Apache Ant 是由 java 语言开发的工具，由 Apache 软件基金会所提供。 Apache Ant 的配置文件写成 XML 容易维护和书写，而且结构很清晰。&lt;/p&gt;
+&lt;p&gt;这个教程将以简单的方式会向你展示如何利用 Apache ANT 来自动地构建和部署过程。在完成本教程的学习以后，你将会发现你已经具备下一阶段学习 Apache Ant 中等水平的专业知识 。&lt;/p&gt;
+&lt;h2&gt;读者&lt;/h2&gt;
+&lt;p&gt;这个教程有助于帮助初学者理解 Apache Ant 的基础知识，并用它来自动地构建和部署的过程。&lt;/p&gt;
+&lt;h2&gt;预备知识&lt;/h2&gt;
+&lt;p&gt;对于学习这个教程，我们假设读者已经具备了 java 或者其他开发语言关于软件开发的基础知识。如果你已经接触过一些软件构建和部署过程，那么对于学习这个教程将会有一定的帮助。  &lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/ant"&gt;https://github.com/scbzyhx/lua&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;英文地址： &lt;a href="http://www.tutorialspoint.com/ant/index.htm"&gt;http://www.tutorialspoint.com/ant/index.htm&lt;/a&gt; &lt;/p&gt;</summary><category term="翻译"></category><category term="Ant"></category></entry><entry><title>Lua 教程</title><link href="/lua-trans.html" rel="alternate"></link><updated>2015-05-27T00:00:00+00:00</updated><author><name>杨海祥</name></author><id>tag:,2015-05-27:lua-trans.html</id><summary type="html">&lt;h1&gt;Lua 教程&lt;/h1&gt;
+&lt;h2&gt;概述&lt;/h2&gt;
+&lt;p&gt;Lua 是用 C 语言开发的可扩展的轻量级编程语言。它起源于 1993 年由 Roberto lerusalimschy,Luiz Henrique de Figueiredo 与 Waddemar Celes 领导的一个内部项目。
+设计者的初衷是希望 Lua 可以成为一款整合 C 语言代码以及其它传统语言代码的软件。这种整合会带来很多好处，它让你不需要重复做 C 语言已经做的很好的工作，而专注于提供那些 C 语言不擅长的特性：提供更高的抽象（离硬件更远）、动态结构、无冗余、易于测试与调试。为了提供这些特性，Lua 提供了安全的环境、动态内存管理，以及擅长处理字符串和其它动态大小数据结构的工具。&lt;/p&gt;
+&lt;h2&gt;特点&lt;/h2&gt;
+&lt;p&gt;Lua 有着许多自身的特点使得它与其它编程语言不同。主要包括：&lt;br /&gt;
+&lt;ul&gt;
+&lt;li&gt;可扩展性&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;简单&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;高效&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;跨平台&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;自由与开放&lt;/li&gt;&lt;br /&gt;
+&lt;/ul&gt;  &lt;/p&gt;
+&lt;h2&gt;应用场景&lt;/h2&gt;
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;游戏开发&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;开发单机应用&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;网站开发&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;扩展数据库或者为数据库开发插件，比如，MySQL 代理或 MySQL WorkBench&lt;/li&gt;&lt;br /&gt;
+&lt;li&gt;开发安全系统，如入侵检测系统（IDS）&lt;/li&gt;&lt;br /&gt;
+&lt;/ul&gt;  &lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/lua"&gt;https://github.com/scbzyhx/lua&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;官方英文原版：&lt;a href = "http://www.tutorialspoint.com/lua/index.htm"&gt;http://www.tutorialspoint.com/lua/index.htm &lt;/a&gt;&lt;/p&gt;</summary><category term="翻译"></category><category term="Lua"></category></entry><entry><title>AWK 教程</title><link href="/awk-trans.html" rel="alternate"></link><updated>2015-05-13T00:00:00+00:00</updated><author><name>杨海祥</name></author><id>tag:,2015-05-13:awk-trans.html</id><summary type="html">&lt;h1&gt;AWK 教程&lt;/h1&gt;
+&lt;p&gt;该教程是为极客学院翻译的项目。&lt;/p&gt;
+&lt;p&gt;翻译教程地址：&lt;a href = "https://github.com/scbzyhx/awk"&gt;https://github.com/scbzyhx/awk&lt;/a&gt; 或者  &lt;a href = "https://github.com/wenquan0hf/awk "&gt;https://github.com/wenquan0hf/awk &lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;官方英文原版：&lt;a href = "http://www.tutorialspoint.com/awk/awk_overview.htm"&gt;http://www.tutorialspoint.com/awk/awk_overview.htm &lt;/a&gt;&lt;/p&gt;</summary><category term="翻译"></category><category term="awk"></category></entry></feed>
