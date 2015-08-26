@@ -14,13 +14,13 @@
 
         <meta name="author" content="杨海祥" />
         <meta name="keywords" content="nfv," />
-        <meta name="description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..." />
+        <meta name="description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态计算 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..." />
 
         <meta property="og:site_name" content="YANG" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="eBPF"/>
         <meta property="og:url" content="http://scbzyhx.github.io/ebpf.html"/>
-        <meta property="og:description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..."/>
+        <meta property="og:description" content="几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态计算 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。 BPF eBPF 起源为 BPF，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load ..."/>
         <meta property="article:published_time" content="2015-08-25" />
             <meta property="article:section" content="日志" />
             <meta property="article:tag" content="nfv" />
@@ -102,7 +102,7 @@ YANG            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>几天前，Linux 基金会成立了一个新的项目 Iovisor。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态算不 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。  </p>
+                <p>几天前，Linux 基金会成立了一个新的项目 <a href="http://iovisor.org">Iovisor</a>。其目标为实现灵活的数据平面，加速 nfv。其基本技术为 eBPF，即 extensible Berkeley Packet Filter。 其基本思路是使用一种灵活的方式在内核实现对网络数据包的处理，而不需要像传统的方法那样通过加载内核模块的方式来实现、或者通过繁重的系统调用在用户态计算 。接下来我们会讲一下什么是 eBPF，从其诞生到发展开始讲起。  </p>
 <h2>BPF</h2>
 <p>eBPF 起源为 <a href="https://zh.wikipedia.org/wiki/BPF">BPF</a>，它提供一种内核的数据包过滤机制。它的基本机制是在内核提供一个虚拟机，用户态将过滤规则以虚拟机指令的形式传递到内核，由内核根据这些指令来过滤网络数据包。1997 年 BPF 被引入到 linux 2.1.75 版本中（由于后面的 eBPF，现在其也被称之为 cBPF，即 classic BPF）。 cBPF 虚拟机提供了两个32位寄存器，30 条指令（store, load, arithmetic,branch,return,transfer）、10 种寻址模式、16 个 32 位寄存器（内存映射）。程序一般生成一个 bool 值，保留或者丢弃数据包。如果想更多了解 BPF 的细节，可以参考论文 <a href="http://www.tcpdump.org/papers/bpf-usenix93.pdf">The BSD Packet Filter: A New Architecture for User-level Packet Capture</a>。</p>
 <p>使用 BPF 的接口为 setsockopt。参数为 SO_ATTCH_FILTER。指令以数组的方式传递到内核中。</p>
@@ -195,18 +195,13 @@ YANG            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/awk.html">
-                            awk
+                        <a href="http://scbzyhx.github.io/tag/sdn.html">
+                            SDN
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/nfv.html">
-                            nfv
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/ant.html">
-                            Ant
+                        <a href="http://scbzyhx.github.io/tag/lua.html">
+                            Lua
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -215,13 +210,8 @@ YANG            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/c.html">
-                            C++，
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/.html">
-                            
+                        <a href="http://scbzyhx.github.io/tag/nfv.html">
+                            nfv
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -230,13 +220,23 @@ YANG            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/sdn.html">
-                            SDN
+                        <a href="http://scbzyhx.github.io/tag/.html">
+                            
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/lua.html">
-                            Lua
+                        <a href="http://scbzyhx.github.io/tag/awk.html">
+                            awk
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://scbzyhx.github.io/tag/ant.html">
+                            Ant
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://scbzyhx.github.io/tag/c.html">
+                            C++，
                         </a>
                     </li>
                 </ul>
