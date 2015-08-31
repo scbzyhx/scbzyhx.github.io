@@ -1,201 +1,389 @@
-<!DOCTYPE html>
-<html lang="zh"
->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-    <title>Ryu - YANG</title>
-    <!-- Using the latest rendering mode for IE -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-
-
-    <meta name="author" content="scbzyhx" />
-    <meta name="keywords" content="Ryu" />
-
-    <!-- Open Graph tags -->
-        <meta property="og:site_name" content="YANG" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="YANG"/>
-        <meta property="og:url" content="http://scbzyhx.github.io"/>
-        <meta property="og:description" content="YANG"/>
-
-
-    <!-- Bootstrap -->
-        <link rel="stylesheet" href="http://scbzyhx.github.io/theme/css/bootstrap.min.css" type="text/css"/>
-    <link href="http://scbzyhx.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="http://scbzyhx.github.io/theme/css/pygments/native.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://scbzyhx.github.io/theme/css/style.css" type="text/css"/>
-
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  
+  <title>YANG - Ryu</title>
+<link href="http://scbzyhx.github.io/theme/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="http://scbzyhx.github.io/" type="application/atom+xml" rel="alternate" title="YANG ATOM Feed" />
+  
+  <!--[if IE]>
+  <style type="text/css"> 
+  .twoColFixRtHdr #mainContent { zoom: 1; }
+  </style>
+  <![endif]-->
 
 </head>
+
 <body>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="http://scbzyhx.github.io/" class="navbar-brand">
-YANG            </a>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                        <li >
-                            <a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a>
-                        </li>
-                        <li >
-                            <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a>
-                        </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="http://scbzyhx.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-</div> <!-- /.navbar -->
-<!-- Banner -->
-<!-- End Banner -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9">
+<div id="container">
 
-            <article>
-                <h2><a href="http://scbzyhx.github.io/ryu_ryuapp.html">Ryu 源码分析之 RyuApp</a></h2>
-                <div class="summary"><p>本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网<a href="http://osrg.github.io/ryu/">文档</a>。  </p>
-<h1>核心对象 RyuApp</h1>
-<p>每一个学习的 Ryu 的用户，接触到的第一个东西就是 app_manager.RyuApp 类。因为你实现一个应用时，手册都会告诉你需要去继承这个类，然后再实现一些方法等等。由此也可见，这其实是一个 Ryu 中一个非常核心的概念。它到底是什么呢？简单来说，默认情况下每一个 RyuApp 实例（为了方便，我们将 RyuApp ...</p>
-                    <a class="btn btn-default btn-xs" href="http://scbzyhx.github.io/ryu_ryuapp.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-
-        </div>
-        <div class="col-sm-3" id="sidebar">
-            <aside>
-
-<section class="well well-sm">
-    <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
-              <ul class="list-group" id="social">
-                <li class="list-group-item"><a href="http://weibo.com/u/3445058592/"><i class="fa fa-weibo fa-lg"></i> weibo</a></li>
-                <li class="list-group-item"><a href="http://github.com/scbzyhx"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
-              </ul>
-            </li>
-
-
-
-            <li class="list-group-item"><a href="http://scbzyhx.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
-                <ul class="list-group " id="tags">
-                    <li class="list-group-item tag-1">
-                        <a href="http://scbzyhx.github.io/tag/fan-yi.html">
-                            翻译
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/sdn.html">
-                            SDN
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/lua.html">
-                            Lua
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/openflow.html">
-                            OpenFlow
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/nfv.html">
-                            nfv
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/ryu.html">
-                            Ryu
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/.html">
-                            
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/awk.html">
-                            awk
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/ant.html">
-                            Ant
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://scbzyhx.github.io/tag/c.html">
-                            C++，
-                        </a>
-                    </li>
-                </ul>
-            </li>
-    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
-      <ul class="list-group" id="links">
-        <li class="list-group-item">
-            <a href="http://github.com/" target="_blank">
-                Github
-            </a>
-        </li>
-      </ul>
-    </li>
+  <div id="header">
+  <h1><a href="http://scbzyhx.github.io">YANG</h1>
+  
+  </div><!-- end #header -->
+  
+  <div id="topMenu">
+  
+    <ul>
+    	<li><a href="http://scbzyhx.github.io">Home</a></li>
+        <li>&ndash;</li>
+        <li><a href="http://scbzyhx.github.io/archives.html">Archives</a></li>
+        
     </ul>
-</section>
-            </aside>
-        </div>
-    </div>
-</div>
-<footer>
-   <div class="container">
-      <hr>
-      <div class="row">
-         <div class="col-xs-10">&copy; 2015 scbzyhx
-            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
-            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
-            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
-      </div>
-   </div>
-</footer>
-<script src="http://scbzyhx.github.io/theme/js/jquery.min.js"></script>
+  
+  </div><!-- end #topMenu -->
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="http://scbzyhx.github.io/theme/js/bootstrap.min.js"></script>
+  <div id="sidebar">
+	<h3>Pages</h3>
+	<ul>
+	</ul>
+    <h3>Categories</h3>
+    <ul>
+		 <li ><a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a></li>
+		 <li ><a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></li>
+	</ul>
+	<li>
+		<h3>Blogroll</h3>
+		<ul>
+                    <li><a href="http://github.com/">Github</a></li>
+		</ul>
+	</li>
+        <li>
+                <h3>Social</h3>
+                <ul>
+                    <li><a href="http://scbzyhx.github.io/" rel="alternate">Flux Atom</a></li>
+                    <li><a href="http://weibo.com/u/3445058592/">weibo</a></li>
+                    <li><a href="http://github.com/scbzyhx">Github</a></li>
+                </ul>
+        </li><!-- /.social -->
+<li>
+        <h3>Tags</h3>
+        <ul>
+                <li><a href="http://scbzyhx.github.io/tag/.html"></a></li>
+                <li><a href="http://scbzyhx.github.io/tag/c.html">C++，</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/nfv.html">nfv</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/fan-yi.html">翻译</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/ant.html">Ant</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/lua.html">Lua</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/awk.html">awk</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a></li>
+                <li><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a></li>
+        </ul>
+</li>
+    
+  
+  </div><!-- end #sidebar -->
 
-<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="http://scbzyhx.github.io/theme/js/respond.min.js"></script>
+  <div id="mainContent">
+  	
+ 
+        
+  	
+    <div class="blogItem">
+    
+      <h2><a href="http://scbzyhx.github.io/ryu_ryuapp.html">Ryu 源码分析之 RyuApp</a></h2>
+      <h3>Le 周一 27 七月 2015</h3>
+      
+      <p>本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网<a href="http://osrg.github.io/ryu/">文档</a>。  </p>
+<h1>核心对象 RyuApp</h1>
+<p>每一个学习的 Ryu 的用户，接触到的第一个东西就是 app_manager.RyuApp 类。因为你实现一个应用时，手册都会告诉你需要去继承这个类，然后再实现一些方法等等。由此也可见，这其实是一个 Ryu 中一个非常核心的概念。它到底是什么呢？简单来说，默认情况下每一个 RyuApp 实例（为了方便，我们将 RyuApp 子类的实例也称之为 RyuApp 的实例，下同）对应一个 greenlet 线程 (这是一种非常轻量级的用户态线程)。如果你自己额外创建新的线程则会存在一个 RyuApp 实例有多个线程的情况。而这些线程的上下文，即运行环境，就是这个这个 RyuApp 对象了。也就是说，一个应用会对应一个 RyuApp 实例，一个线程。其中实例提供上下文环境，而这个线程对应的函数就是 RyuApp 的 _event_loop 函数（稍后会分析）。  </p>
+<h1>启动过程概要</h1>
+<p>如果你用过 set_ev_cls 就会明白，线程之间或者说应用之间通过事件进行通信，那么这些事件到底是怎么进行路由的呢，即如何放到各 RyuApp 实现的事件队列中的呢，如何建立这种联系呢（至少写代码的时候不太容易明白），就需要先大致了解一下怎么么启动的了。启动的详细过程，在后面的博客会详解，这儿只说个大概内容。  </p>
+<p>其实，所有的多线程应用都是从单线程开始的， Ryu 也不例外。 使用 ryu-manger app.py 启动应用后，  </p>
+<ol>
+<li>主线程先通过 app.py 获得所依赖的所有其它类（您应该已经知道了，可通过 _CONTEXTS 获得）。  </li>
+<li>再创建所有这些类的对象并初始化，并将对象保存起来，创建对象字典。  </li>
+<li>接下来用该字典初始化 app.py 中的的应用。  </li>
+<li>将所有的对象都创建完毕后，建立对象这些对象之间的联系，比如 A 接收 B 发送的事件，则 A B 之前必然需要某些机制来关联起来。这种关联就是在这个阶段完成的。  </li>
+<li>最后，再启动各对象对应的线程。然后整个应用就启动起来了。  </li>
+</ol>
+<p>其实这里面最难理解的应该就属于如何建立这些线程之间复杂的关系了。 要想了解这个复杂的关联，我们需要分析一下 RyuApp 的源代码，下面我将对比着源代码来说明这个过程。  </p>
+<h1>RyuApp 源代码剖析</h1>
+<div class="highlight"><pre><span class="k">class</span> <span class="n">RyuApp</span>(<span class="n">object</span>):
 
-    <!-- Disqus -->
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'yhx'; // required: replace example with your forum shortname
+    <span class="n">_CONTEXTS</span> = {}
 
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var s = document.createElement('script');
-            s.async = true;
-            s.type = 'text/javascript';
-            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
-    </script>
-    <!-- End Disqus Code -->
+   <span class="s">&quot;&quot;&quot;</span>
+<span class="s">   前面已经说了，_CONTEXTS 就是解决依赖的。所有位于在 _CONTEXTS 类都会相应的生成一个对象。将这些对象建立一个类似于 _CONTEXTS 的字典，只是将这个对象字典中的值由类换成了相应的类的实例。而这个实例字典会用于初始化本实例。</span>
+<span class="s">   例如：</span>
+<span class="s">          _CONTEXTS = {</span>
+<span class="s">            &#39;network&#39;: network.Network</span>
+<span class="s">        }</span>
+<span class="s">        def __init__(self, *args, *kwargs):</span>
+<span class="s">            self.network = kwargs[&#39;network&#39;]</span>
+<span class="s">    会生成一个 Network 类的实例。而 kwargs 实则为 {&quot;</span><span class="n">network</span><span class="s">&quot;:Netwok_instance}</span>
+<span class="s">   &quot;&quot;&quot;</span>
+    <span class="n">_EVENTS</span> = []
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    这个列表存放，本类会产生的事件的类。如果这个类会产生 A 类事件，则将该事件放到 _EVENTS 中。</span>
+<span class="s">   这样做的目的在于，如果一个类 Receiver 对这个事件 A 感兴趣，在建立联系的阶段（上面说的第4阶段）主线程就依据 _EVENTS 将 Receiver 的实例注册到本实例中。 这个过程在启动过程中可以看到。 </span>
+<span class="s">    &quot;&quot;&quot;</span>
 
+    <span class="n">OFP_VERSIONS</span> = <span class="n">None</span>
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    本应用支持的 OpenFlow 版本号，在启动阶段会用到。默认支持所有版本。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="nv">@classmethod</span>
+    <span class="n">def</span> <span class="n">context_iteritems</span>(<span class="n">cls</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Return iterator over the (key, contxt class) of application context</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">iter</span>(<span class="n">cls</span>.<span class="n">_CONTEXTS</span>.<span class="n">items</span>())
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    前面说到， _CONTEXTS 解决应用依赖的问题，这个类方法用于获得 _CONTEXTS</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, *<span class="n">_args</span>, **<span class="n">_kwargs</span>):
+        <span class="n">super</span>(<span class="n">RyuApp</span>, <span class="k">self</span>).<span class="n">__init__</span>()
+        <span class="k">self</span>.<span class="nb">name</span> = <span class="k">self</span>.<span class="n">__class__</span>.<span class="n">__name__</span>    <span class="c-Singleline">#本应用的名称，是全局唯一的，可以通过名称来查找实例。如果你想直接调用实现的方法时，可以这么干。</span>
+
+        <span class="k">self</span>.<span class="n">event_handlers</span> = {}        <span class="c-Singleline"># ev_cls -&gt; handlers:list  # 事件处理函数字典，事件类到处理函数的映射。 _event_loop 中对每个事件都从这个数据结构中查找相应的处理函数并调用。</span>
+        <span class="k">self</span>.<span class="n">observers</span> = {}     <span class="c-Singleline"># ev_cls -&gt; observer-name -&gt; states:set  #这个对应存储哪些实例会对本实例的产生的事件感兴趣，则相应的存储于此 observers 中。</span>
+
+        <span class="c-Singleline">#前面的个数据结构就解决了应用之间相互关联的问题， 如果 A 对应 B 的某个事件感兴趣，则 B 就会出现在 A 的 observers 中，而 B 中处理事件的函数则在 B 自己的 event_handler 中。</span>
+
+        <span class="k">self</span>.<span class="n">threads</span> = []     <span class="c-Singleline">#存储本应用启动的 greenlet 线程，默认情况下只有 _event_loop 对应的线程。当然可以另外启动线程。 </span>
+        <span class="k">self</span>.<span class="n">events</span> = <span class="n">hub</span>.<span class="n">Queue</span>(<span class="mi">128</span>)  <span class="c-Singleline">#这个对列存放发送至本实例的所有事件。</span>
+        <span class="k">if</span> <span class="n">hasattr</span>(<span class="k">self</span>.<span class="n">__class__</span>, <span class="s">&#39;LOGGER_NAME&#39;</span>):  <span class="c-Singleline"># 日志记录</span>
+            <span class="k">self</span>.<span class="n">logger</span> = <span class="n">logging</span>.<span class="n">getLogger</span>(<span class="k">self</span>.<span class="n">__class__</span>.<span class="n">LOGGER_NAME</span>)
+        <span class="n">else:</span>
+            <span class="k">self</span>.<span class="n">logger</span> = <span class="n">logging</span>.<span class="n">getLogger</span>(<span class="k">self</span>.<span class="nb">name</span>)
+        <span class="k">self</span>.<span class="n">CONF</span> = <span class="n">cfg</span>.<span class="n">CONF</span>  <span class="c-Singleline"># 全局配置，</span>
+
+        <span class="c-Singleline"># prevent accidental creation of instances of this class outside RyuApp</span>
+        <span class="k">class</span> <span class="n">_EventThreadStop</span>(<span class="n">event</span>.<span class="n">EventBase</span>):   <span class="c-Singleline">#这个事件内部使用，用于通知线程终止。在 stop 方法中会用到。</span>
+            <span class="nb">pass</span>
+        <span class="k">self</span>.<span class="n">_event_stop</span> = <span class="n">_EventThreadStop</span>()
+        <span class="k">self</span>.<span class="n">is_active</span> = <span class="nb">True</span>    <span class="c-Singleline"># 标识线程是否结束。</span>
+
+    <span class="n">def</span> <span class="n">start</span>(<span class="k">self</span>):  <span class="c-Singleline">##此函数启动线程， 可以看到对应的函数为 _event_loop，这个函数不停地处理到达的事件。</span>
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Hook that is called after startup initialization is done.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="k">self</span>.<span class="n">threads</span>.<span class="n">append</span>(<span class="n">hub</span>.<span class="n">spawn</span>(<span class="k">self</span>.<span class="n">_event_loop</span>))
+
+    <span class="n">def</span> <span class="n">stop</span>(<span class="k">self</span>):
+        <span class="k">self</span>.<span class="n">is_active</span> = <span class="nb">False</span>
+        <span class="k">self</span>.<span class="n">_send_event</span>(<span class="k">self</span>.<span class="n">_event_stop</span>, <span class="n">None</span>)
+        <span class="n">hub</span>.<span class="n">joinall</span>(<span class="k">self</span>.<span class="n">threads</span>)
+   <span class="s">&quot;&quot;&quot;</span>
+<span class="s">   结束线程，可以看到首先将，is_active 设置为 false, 再发送一个结束事件。 </span>
+<span class="s">   &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">register_handler</span>(<span class="k">self</span>, <span class="n">ev_cls</span>, <span class="n">handler</span>):
+        <span class="n">assert</span> <span class="n">callable</span>(<span class="n">handler</span>)
+        <span class="k">self</span>.<span class="n">event_handlers</span>.<span class="n">setdefault</span>(<span class="n">ev_cls</span>, [])
+        <span class="k">self</span>.<span class="n">event_handlers</span>[<span class="n">ev_cls</span>].<span class="n">append</span>(<span class="n">handler</span>)
+   <span class="s">&quot;&quot;&quot;</span>
+<span class="s">   注册事件处理器，handler 即注册的处理函数（对其进行了一些包装）。_event_loop 线程根据这个 event_handler 字典处理到达的事件。</span>
+<span class="s">   &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">unregister_handler</span>(<span class="k">self</span>, <span class="n">ev_cls</span>, <span class="n">handler</span>):
+        <span class="n">assert</span> <span class="n">callable</span>(<span class="n">handler</span>)
+        <span class="k">self</span>.<span class="n">event_handlers</span>[<span class="n">ev_cls</span>].<span class="n">remove</span>(<span class="n">handler</span>)
+        <span class="k">if</span> <span class="nb">not</span> <span class="k">self</span>.<span class="n">event_handlers</span>[<span class="n">ev_cls</span>]:
+            <span class="n">del</span> <span class="k">self</span>.<span class="n">event_handlers</span>[<span class="n">ev_cls</span>]
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    取消注册</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">register_observer</span>(<span class="k">self</span>, <span class="n">ev_cls</span>, <span class="nb">name</span>, <span class="n">states</span>=<span class="n">None</span>):
+        <span class="n">states</span> = <span class="n">states</span> <span class="o">or</span> <span class="n">set</span>()
+        <span class="n">ev_cls_observers</span> = <span class="k">self</span>.<span class="n">observers</span>.<span class="n">setdefault</span>(<span class="n">ev_cls</span>, {})
+        <span class="n">ev_cls_observers</span>.<span class="n">setdefault</span>(<span class="nb">name</span>, <span class="n">set</span>()).<span class="n">update</span>(<span class="n">states</span>)
+
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    这个函数用于声明告诉本应用，其它某些应用对本应用产生的某些事件感兴趣。在此处注册后，本应用产生事件时，就会将事件消息发送至那些感兴趣的应用的事件队列中。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">unregister_observer</span>(<span class="k">self</span>, <span class="n">ev_cls</span>, <span class="nb">name</span>):
+        <span class="n">observers</span> = <span class="k">self</span>.<span class="n">observers</span>.<span class="n">get</span>(<span class="n">ev_cls</span>, {})
+        <span class="n">observers</span>.<span class="nb">pop</span>(<span class="nb">name</span>)
+
+    <span class="n">def</span> <span class="n">unregister_observer_all_event</span>(<span class="k">self</span>, <span class="nb">name</span>):
+        <span class="k">for</span> <span class="n">observers</span> <span class="n">in</span> <span class="k">self</span>.<span class="n">observers</span>.<span class="nb">values</span>():
+            <span class="n">observers</span>.<span class="nb">pop</span>(<span class="nb">name</span>, <span class="n">None</span>)
+
+    <span class="n">def</span> <span class="n">observe_event</span>(<span class="k">self</span>, <span class="n">ev_cls</span>, <span class="n">states</span>=<span class="n">None</span>):
+        <span class="n">brick</span> = <span class="n">_lookup_service_brick_by_ev_cls</span>(<span class="n">ev_cls</span>)
+        <span class="k">if</span> <span class="n">brick</span> <span class="k">is</span> <span class="nb">not</span> <span class="n">None:</span>
+            <span class="n">brick</span>.<span class="n">register_observer</span>(<span class="n">ev_cls</span>, <span class="k">self</span>.<span class="nb">name</span>, <span class="n">states</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    如果本应用对某个事件感兴趣，那么就可以调用这个函数将其注册到产生该事件的应用中。</span>
+<span class="s">    其中 _lookup_service_brick_by_ev_cls 函数会在全局 SERVICE_BRICKS 数组中查找产生指定事件消息的应用。</span>
+<span class="s">    SERVICE_BRICKS 数组存储了启动的所有的应用。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">unobserve_event</span>(<span class="k">self</span>, <span class="n">ev_cls</span>):
+        <span class="n">brick</span> = <span class="n">_lookup_service_brick_by_ev_cls</span>(<span class="n">ev_cls</span>)
+        <span class="k">if</span> <span class="n">brick</span> <span class="k">is</span> <span class="nb">not</span> <span class="n">None:</span>
+            <span class="n">brick</span>.<span class="n">unregister_observer</span>(<span class="n">ev_cls</span>, <span class="k">self</span>.<span class="nb">name</span>)
+
+    <span class="n">def</span> <span class="n">get_handlers</span>(<span class="k">self</span>, <span class="n">ev</span>, <span class="k">state</span>=<span class="n">None</span>):
+        <span class="s">&quot;&quot;&quot;Returns a list of handlers for the specific event.</span>
+<span class="s">        :param ev: The event to handle.</span>
+<span class="s">        :param state: The current state. (&quot;</span><span class="n">dispatcher</span><span class="s">&quot;)</span>
+<span class="s">                      If None is given, returns all handlers for the event.</span>
+<span class="s">                      Otherwise, returns only handlers that are interested</span>
+<span class="s">                      in the specified state.</span>
+<span class="s">                      The default is None.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="n">ev_cls</span> = <span class="n">ev</span>.<span class="n">__class__</span>
+        <span class="n">handlers</span> = <span class="k">self</span>.<span class="n">event_handlers</span>.<span class="n">get</span>(<span class="n">ev_cls</span>, [])
+        <span class="k">if</span> <span class="k">state</span> <span class="k">is</span> <span class="n">None:</span>
+            <span class="k">return</span> <span class="n">handlers</span>
+
+        <span class="n">def</span> <span class="n">test</span>(<span class="n">h</span>):
+            <span class="k">if</span> <span class="nb">not</span> <span class="n">hasattr</span>(<span class="n">h</span>, <span class="s">&#39;callers&#39;</span>) <span class="o">or</span> <span class="n">ev_cls</span> <span class="nb">not</span> <span class="n">in</span> <span class="n">h</span>.<span class="n">callers:</span>
+                <span class="c-Singleline"># dynamically registered handlers does not have</span>
+                <span class="c-Singleline"># h.callers element for the event.</span>
+                <span class="k">return</span> <span class="nb">True</span>
+            <span class="n">states</span> = <span class="n">h</span>.<span class="n">callers</span>[<span class="n">ev_cls</span>].<span class="n">dispatchers</span>
+            <span class="k">if</span> <span class="nb">not</span> <span class="n">states:</span>
+                <span class="c-Singleline"># empty states means all states</span>
+                <span class="k">return</span> <span class="nb">True</span>
+            <span class="k">return</span> <span class="k">state</span> <span class="n">in</span> <span class="n">states</span>
+
+        <span class="k">return</span> <span class="n">filter</span>(<span class="n">test</span>, <span class="n">handlers</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    查找并返回事件的处理函数</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">get_observers</span>(<span class="k">self</span>, <span class="n">ev</span>, <span class="k">state</span>):
+        <span class="n">observers</span> = []
+        <span class="k">for</span> <span class="n">k</span>, <span class="n">v</span> <span class="n">in</span> <span class="k">self</span>.<span class="n">observers</span>.<span class="n">get</span>(<span class="n">ev</span>.<span class="n">__class__</span>, {}).<span class="n">items</span>():
+            <span class="k">if</span> <span class="nb">not</span> <span class="k">state</span> <span class="o">or</span> <span class="nb">not</span> <span class="n">v</span> <span class="o">or</span> <span class="k">state</span> <span class="n">in</span> <span class="n">v:</span>
+                <span class="n">observers</span>.<span class="n">append</span>(<span class="n">k</span>)
+
+        <span class="k">return</span> <span class="n">observers</span>
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    返回对指定事件（本应用产生的）感兴趣的其它应用。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="n">send_request</span>(<span class="k">self</span>, <span class="n">req</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Make a synchronous request.</span>
+<span class="s">        Set req.sync to True, send it to a Ryu application specified by</span>
+<span class="s">        req.dst, and block until receiving a reply.</span>
+<span class="s">        Returns the received reply.</span>
+<span class="s">        The argument should be an instance of EventRequestBase.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+
+        <span class="n">assert</span> <span class="n">isinstance</span>(<span class="n">req</span>, <span class="n">EventRequestBase</span>)
+        <span class="n">req</span>.<span class="n">sync</span> = <span class="nb">True</span>
+        <span class="n">req</span>.<span class="n">reply_q</span> = <span class="n">hub</span>.<span class="n">Queue</span>()
+        <span class="k">self</span>.<span class="n">send_event</span>(<span class="n">req</span>.<span class="n">dst</span>, <span class="n">req</span>)
+        <span class="c-Singleline"># going to sleep for the reply</span>
+        <span class="k">return</span> <span class="n">req</span>.<span class="n">reply_q</span>.<span class="n">get</span>()
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    同步发送请求。它将请求发送到 req.dst 指定的应用，并阻塞到收到返回。其它它本质也是用事件消息实现的，不过它主动睡眠，等待被处理后（reply_q 中有了数据），再从 get 函数的阻塞处继续执行。</span>
+<span class="s">   &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">_event_loop</span>(<span class="k">self</span>):
+        <span class="k">while</span> <span class="k">self</span>.<span class="n">is_active</span> <span class="o">or</span> <span class="nb">not</span> <span class="k">self</span>.<span class="n">events</span>.<span class="n">empty</span>():
+            <span class="n">ev</span>, <span class="k">state</span> = <span class="k">self</span>.<span class="n">events</span>.<span class="n">get</span>()
+            <span class="k">if</span> <span class="n">ev</span> == <span class="k">self</span>.<span class="n">_event_stop:</span>
+                <span class="k">continue</span>
+            <span class="n">handlers</span> = <span class="k">self</span>.<span class="n">get_handlers</span>(<span class="n">ev</span>, <span class="k">state</span>)
+            <span class="k">for</span> <span class="n">handler</span> <span class="n">in</span> <span class="n">handlers:</span>
+                <span class="n">handler</span>(<span class="n">ev</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    应用线程的主体部分。其非常简单。即不停地从队列中取出事件消息，将查找相应的处理函数，再调用算出函数。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">_send_event</span>(<span class="k">self</span>, <span class="n">ev</span>, <span class="k">state</span>):
+        <span class="k">self</span>.<span class="n">events</span>.<span class="n">put</span>((<span class="n">ev</span>, <span class="k">state</span>))
+
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    向自己的队列中发送事件消息，停止消息应该用到了它。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">send_event</span>(<span class="k">self</span>, <span class="nb">name</span>, <span class="n">ev</span>, <span class="k">state</span>=<span class="n">None</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Send the specified event to the RyuApp instance specified by name.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">name</span> <span class="n">in</span> <span class="n">SERVICE_BRICKS:</span>
+            <span class="k">if</span> <span class="n">isinstance</span>(<span class="n">ev</span>, <span class="n">EventRequestBase</span>):
+                <span class="n">ev</span>.<span class="n">src</span> = <span class="k">self</span>.<span class="nb">name</span>
+            <span class="n">LOG</span>.<span class="n">debug</span>(<span class="s">&quot;EVENT %s-&gt;%s %s&quot;</span>,
+                      <span class="k">self</span>.<span class="nb">name</span>, <span class="nb">name</span>, <span class="n">ev</span>.<span class="n">__class__</span>.<span class="n">__name__</span>)
+            <span class="n">SERVICE_BRICKS</span>[<span class="nb">name</span>].<span class="n">_send_event</span>(<span class="n">ev</span>, <span class="k">state</span>)
+        <span class="n">else:</span>
+            <span class="n">LOG</span>.<span class="n">debug</span>(<span class="s">&quot;EVENT LOST %s-&gt;%s %s&quot;</span>,
+                      <span class="k">self</span>.<span class="nb">name</span>, <span class="nb">name</span>, <span class="n">ev</span>.<span class="n">__class__</span>.<span class="n">__name__</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    向指定的应用（name）发送事件消息。应用由名称指定，应用的实例从全局变量 SERVICE_BRICK 查找所得，然后直接将消息发送到该应用的消息队列中。</span>
+<span class="s">    &quot;&quot;&quot;</span>       
+
+    <span class="n">def</span> <span class="n">send_event_to_observers</span>(<span class="k">self</span>, <span class="n">ev</span>, <span class="k">state</span>=<span class="n">None</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Send the specified event to all observers of this RyuApp.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">observer</span> <span class="n">in</span> <span class="k">self</span>.<span class="n">get_observers</span>(<span class="n">ev</span>, <span class="k">state</span>):
+            <span class="k">self</span>.<span class="n">send_event</span>(<span class="n">observer</span>, <span class="n">ev</span>, <span class="k">state</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    将事件消息发送到那些对其感兴趣的应用的队列中。所谓的感兴趣，即指调用 register_observer 注册过的应用。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">def</span> <span class="n">reply_to_request</span>(<span class="k">self</span>, <span class="n">req</span>, <span class="n">rep</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Send a reply for a synchronous request sent by send_request.</span>
+<span class="s">        The first argument should be an instance of EventRequestBase.</span>
+<span class="s">        The second argument should be an instance of EventReplyBase.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+
+        <span class="n">assert</span> <span class="n">isinstance</span>(<span class="n">req</span>, <span class="n">EventRequestBase</span>)
+        <span class="n">assert</span> <span class="n">isinstance</span>(<span class="n">rep</span>, <span class="n">EventReplyBase</span>)
+        <span class="n">rep</span>.<span class="n">dst</span> = <span class="n">req</span>.<span class="n">src</span>
+        <span class="k">if</span> <span class="n">req</span>.<span class="n">sync:</span>
+            <span class="n">req</span>.<span class="n">reply_q</span>.<span class="n">put</span>(<span class="n">rep</span>)
+        <span class="n">else:</span>
+            <span class="k">self</span>.<span class="n">send_event</span>(<span class="n">rep</span>.<span class="n">dst</span>, <span class="n">rep</span>)
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    处理同步请求，往reply_q 队列中放入数据即可唤醒 send_reqeust。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">def</span> <span class="nb">close</span>(<span class="k">self</span>):
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        teardown method.</span>
+<span class="s">        The method name, close, is chosen for python context manager</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="nb">pass</span>
+    <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    本来应该是打算终止本线程的，不过不知道为什么根本没有用到。目前 Ryu 的终止还是相当的粗暴，只能直接使用 Ctrl+C。</span>
+<span class="s">    &quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>上面就是 RyuApp 类的代码部分了。所有应用之间的交互过程其实也不是太复杂，如果 A 应用产生事件 a，而 B 应用对事件 a 感兴趣，希望 A 产生该事件的时候，通知B。那么 B 在初始化时就会使用 register_observer 在 A 处注册，以告诉 A，B 对 A 的 a 事件感兴趣，那么 A 产生该事件消息时，就会调用 send_event_to_observer 将 a 放到 B 的消息队列中。 B 中再处理消息并调用相应的消息处理函数就 OK 了。这样就实现了各应用之间的通信了。</p>
+<p>那么还剩下两个问题了：</p>
+<ol>
+<li>我们从来没有调用  register_observer 去显式注册，那么这种注册到底是什么时候完成的呢？</li>
+<li>我们并没有使用 register_handler 注册一个事件消息处理函数，那么这个又是什么时候完成的呢？</li>
+</ol>
+<p>这两个问题与应用加载的过程十分密切，所以我们需留在下一篇博客解释初始化过程的时候再来讲解。</p>
+<p>预告：消息处理函数的注册与 set_ev_cls 与 set_ev_handler 有十分密切的关系。</p>	
+
+      
+      <h3 class="blogMeta">Par <a href="#">杨海祥</a>, Catégorie : <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></h3>
+	<h3 class="blogMeta">Tags : <span><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a> / </span>
+<span><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a> / </span>
+<span><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a> / </span>
+</h3>
+    
+    </div><!-- end #blogItem -->
+  
+  </div><!-- end #mainContent -->
+
+<div class="clearfloat"></div>
+
+  <div id="footer">
+  
+    <p><a href="http://css4free.com/" title="free CSS web site designs">Free CSS Gallery</a></p>
+    <p>Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
+  </div><!-- end #footer -->
+
+</div><!-- end #container -->
 </body>
 </html>
