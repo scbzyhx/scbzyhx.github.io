@@ -1,96 +1,37 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<!doctype html>
+<html lang="">	
 <head>
-
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
-  <title>Ryu 源码分析之 RyuApp</title>
-<link href="http://scbzyhx.github.io/theme/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="http://scbzyhx.github.io/" type="application/atom+xml" rel="alternate" title="YANG ATOM Feed" />
-  
-  <!--[if IE]>
-  <style type="text/css"> 
-  .twoColFixRtHdr #mainContent { zoom: 1; }
-  </style>
-  <![endif]-->
-
+	<meta charset="utf-8"/>
+	<title>Ryu 源码分析之 RyuApp - YANG</title>	
+	<meta name="author" content="scbzyhx">
+	
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0">
+	
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:700,400|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="http://scbzyhx.github.io/theme/css/main.css" type="text/css" />
+		
+	<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	
+	<link href="http://scbzyhx.github.io/" type="application/atom+xml" rel="alternate" title="YANG ATOM Feed" />
 </head>
-
-<body>
-
-<div id="container">
-
-  <div id="header">
-  <h1><a href="http://scbzyhx.github.io">YANG</h1>
-  
-  </div><!-- end #header -->
-  
-  <div id="topMenu">
-  
-    <ul>
-    	<li><a href="http://scbzyhx.github.io">Home</a></li>
-        <li>&ndash;</li>
-        <li><a href="http://scbzyhx.github.io/archives.html">Archives</a></li>
-        
-    </ul>
-  
-  </div><!-- end #topMenu -->
-
-  <div id="sidebar">
-	<h3>Pages</h3>
-	<ul>
-	</ul>
-    <h3>Categories</h3>
-    <ul>
-		 <li ><a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a></li>
-		 <li class="active"><a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></li>
-	</ul>
-	<li>
-		<h3>Blogroll</h3>
-		<ul>
-                    <li><a href="http://github.com/">Github</a></li>
-		</ul>
-	</li>
-        <li>
-                <h3>Social</h3>
-                <ul>
-                    <li><a href="http://scbzyhx.github.io/" rel="alternate">Flux Atom</a></li>
-                    <li><a href="http://weibo.com/u/3445058592/">weibo</a></li>
-                    <li><a href="http://github.com/scbzyhx">Github</a></li>
-                </ul>
-        </li><!-- /.social -->
-<li>
-        <h3>Tags</h3>
-        <ul>
-                <li><a href="http://scbzyhx.github.io/tag/.html"></a></li>
-                <li><a href="http://scbzyhx.github.io/tag/c.html">C++，</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/lua.html">Lua</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/fan-yi.html">翻译</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ant.html">Ant</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/nfv.html">nfv</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/awk.html">awk</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ecmascript.html">ECMAScript</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a></li>
-        </ul>
-</li>
-    
-  
-  </div><!-- end #sidebar -->
-
-  <div id="mainContent">
-  	
- 
-
-
-<div class="blogItem">
-    
-      <h2><a href="http://scbzyhx.github.io/ryu_ryuapp.html">Ryu 源码分析之 RyuApp</a></h2>
-      <h3>Le 周一 27 七月 2015</h3>
-      
-  <p>本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网<a href="http://osrg.github.io/ryu/">文档</a>。  </p>
+	
+<body>		
+	<header class="clearfix" role="banner">
+		<div class="wrapper">
+			<h1 class="huge"><a href="http://scbzyhx.github.io">YANG</a></h1>
+		</div>
+	</header>
+	
+<div role="main" class="content clearfix">	
+	<article>
+		<div class="post wrapper">
+			<h1>Ryu 源码分析之 RyuApp</h1>
+			<p>本篇博客是 Ryu 源码分析的第一篇，前段时间用 Ryu 时由于需要去看了一下其源代码，因此对其有一定了解。在此，将其记录下来。  Ryu 是一个 python 实现的 SDN 控制器，其目前支持到 OpenFlow 1.3 版本。同时还支持 OVSDB， netconf 协议 。更多的内容可以参考官网<a href="http://osrg.github.io/ryu/">文档</a>。  </p>
 <h1>核心对象 RyuApp</h1>
 <p>每一个学习的 Ryu 的用户，接触到的第一个东西就是 app_manager.RyuApp 类。因为你实现一个应用时，手册都会告诉你需要去继承这个类，然后再实现一些方法等等。由此也可见，这其实是一个 Ryu 中一个非常核心的概念。它到底是什么呢？简单来说，默认情况下每一个 RyuApp 实例（为了方便，我们将 RyuApp 子类的实例也称之为 RyuApp 的实例，下同）对应一个 greenlet 线程 (这是一种非常轻量级的用户态线程)。如果你自己额外创建新的线程则会存在一个 RyuApp 实例有多个线程的情况。而这些线程的上下文，即运行环境，就是这个这个 RyuApp 对象了。也就是说，一个应用会对应一个 RyuApp 实例，一个线程。其中实例提供上下文环境，而这个线程对应的函数就是 RyuApp 的 _event_loop 函数（稍后会分析）。  </p>
 <h1>启动过程概要</h1>
@@ -364,41 +305,61 @@
 <li>我们并没有使用 register_handler 注册一个事件消息处理函数，那么这个又是什么时候完成的呢？</li>
 </ol>
 <p>这两个问题与应用加载的过程十分密切，所以我们需留在下一篇博客解释初始化过程的时候再来讲解。</p>
-<p>预告：消息处理函数的注册与 set_ev_cls 与 set_ev_handler 有十分密切的关系。</p>	
-      
-      <h3 class="blogMeta">Par <a href="#">杨海祥</a>, Catégorie : <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></h3>
-	<h3 class="blogMeta">Tags : <span><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a> / </span>
-<span><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a> / </span>
-<span><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a> / </span>
-</h3>
-    
-    </div><!-- end #blogItem -->
-<div class="blogItem">
-    
-      <h2>Commentaires</h2>
-<div id="disqus_thread"></div>
-    <script type="text/javascript">
-       var disqus_identifier = "ryu_ryuapp.html";
-       (function() {
-       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-       dsq.src = 'http://yhx.disqus.com/embed.js';
-       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-    </script>
-  </div>
-				
-				<!-- end #content -->
-  
-  </div><!-- end #mainContent -->
-
-<div class="clearfloat"></div>
-
-  <div id="footer">
-  
-    <p><a href="http://css4free.com/" title="free CSS web site designs">Free CSS Gallery</a></p>
-    <p>Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
-  </div><!-- end #footer -->
-
-</div><!-- end #container -->
+<p>预告：消息处理函数的注册与 set_ev_cls 与 set_ev_handler 有十分密切的关系。</p>
+			
+			<a href="https://twitter.com/share" class="twitter-share-button" data-via="" data-lang="en" data-size="large" data-related="">Tweet</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						
+			<div class="comments">
+			<h2>Comments !</h2>
+			    <div id="disqus_thread"></div>
+			    <script type="text/javascript">
+			       var disqus_identifier = "ryu_ryuapp.html";
+			       (function() {
+			       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			       dsq.src = '//yhx.disqus.com/embed.js';
+			       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			      })();
+			    </script>
+			</div>
+			
+		</div>
+	
+<div class="meta wrapper">
+	<time datetime="2015-07-27T00:00:00+08:00" pubdate>周一 27 七月 2015</time>
+	<ul class="tag clearfix">
+		<li><a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></li>
+		<li><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a></li>
+		<li><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a></li>
+		<li><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a></li>
+	</ul>
+</div>	</article>	
+</div>
+	
+		
+<footer class="clearfix">
+	<div class="wrapper pages">
+		<ul class="nav">
+			<li><a href="http://scbzyhx.github.io/archives.html">Archive</a></li>
+		</ul>
+	</div>
+	
+	<div class="copy wrapper">
+		<ul class="social">
+			<li><a href="http://weibo.com/u/3445058592/">weibo</a></li>
+			<li><a href="http://github.com/scbzyhx">Github</a></li>
+		</ul>
+	
+		<p role="contentinfo">© 2012 scbzyhx<br>
+		Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a>.</p>
+	</div>
+</footer>
+	
+	<script>
+	  var _gaq=[['_setAccount',''],['_trackPageview']];
+	  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+	  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+	  s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
 </body>
 </html>

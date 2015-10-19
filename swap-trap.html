@@ -1,96 +1,37 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<!doctype html>
+<html lang="">	
 <head>
-
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
-  <title>Swap 函数的坑</title>
-<link href="http://scbzyhx.github.io/theme/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="http://scbzyhx.github.io/" type="application/atom+xml" rel="alternate" title="YANG ATOM Feed" />
-  
-  <!--[if IE]>
-  <style type="text/css"> 
-  .twoColFixRtHdr #mainContent { zoom: 1; }
-  </style>
-  <![endif]-->
-
+	<meta charset="utf-8"/>
+	<title>Swap 函数的坑 - YANG</title>	
+	<meta name="author" content="scbzyhx">
+	
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0">
+	
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:700,400|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="http://scbzyhx.github.io/theme/css/main.css" type="text/css" />
+		
+	<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	
+	<link href="http://scbzyhx.github.io/" type="application/atom+xml" rel="alternate" title="YANG ATOM Feed" />
 </head>
-
-<body>
-
-<div id="container">
-
-  <div id="header">
-  <h1><a href="http://scbzyhx.github.io">YANG</h1>
-  
-  </div><!-- end #header -->
-  
-  <div id="topMenu">
-  
-    <ul>
-    	<li><a href="http://scbzyhx.github.io">Home</a></li>
-        <li>&ndash;</li>
-        <li><a href="http://scbzyhx.github.io/archives.html">Archives</a></li>
-        
-    </ul>
-  
-  </div><!-- end #topMenu -->
-
-  <div id="sidebar">
-	<h3>Pages</h3>
-	<ul>
-	</ul>
-    <h3>Categories</h3>
-    <ul>
-		 <li ><a href="http://scbzyhx.github.io/category/fan-yi.html">翻译</a></li>
-		 <li class="active"><a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></li>
-	</ul>
-	<li>
-		<h3>Blogroll</h3>
-		<ul>
-                    <li><a href="http://github.com/">Github</a></li>
-		</ul>
-	</li>
-        <li>
-                <h3>Social</h3>
-                <ul>
-                    <li><a href="http://scbzyhx.github.io/" rel="alternate">Flux Atom</a></li>
-                    <li><a href="http://weibo.com/u/3445058592/">weibo</a></li>
-                    <li><a href="http://github.com/scbzyhx">Github</a></li>
-                </ul>
-        </li><!-- /.social -->
-<li>
-        <h3>Tags</h3>
-        <ul>
-                <li><a href="http://scbzyhx.github.io/tag/.html"></a></li>
-                <li><a href="http://scbzyhx.github.io/tag/c.html">C++，</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/lua.html">Lua</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/openflow.html">OpenFlow</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/fan-yi.html">翻译</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ant.html">Ant</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/nfv.html">nfv</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/awk.html">awk</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ecmascript.html">ECMAScript</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/sdn.html">SDN</a></li>
-                <li><a href="http://scbzyhx.github.io/tag/ryu.html">Ryu</a></li>
-        </ul>
-</li>
-    
-  
-  </div><!-- end #sidebar -->
-
-  <div id="mainContent">
-  	
- 
-
-
-<div class="blogItem">
-    
-      <h2><a href="http://scbzyhx.github.io/swap-trap.html">Swap 函数的坑</a></h2>
-      <h3>Le 周六 13 六月 2015</h3>
-      
-  <p>昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。</p>
+	
+<body>		
+	<header class="clearfix" role="banner">
+		<div class="wrapper">
+			<h1 class="huge"><a href="http://scbzyhx.github.io">YANG</a></h1>
+		</div>
+	</header>
+	
+<div role="main" class="content clearfix">	
+	<article>
+		<div class="post wrapper">
+			<h1>Swap 函数的坑</h1>
+			<p>昨天在刷 Leetcode　的时候，掉进一个坑里面了，害得自己调了快一个小时，在此记录一下。</p>
 <p>在交换两个变量的值的时候，用一个中间变量总感觉比较　Low，所以就学着大神们使用异或运算来完成这事儿，所以我写了如下这么一段代码(C++)，最后果然装逼失败：</p>
 <div class="highlight"><pre>[1]    void swap(int &amp;a, int &amp;b) {
 [2]        a = a ^ b;
@@ -119,39 +60,59 @@ a = (a^b)^a = b;
 </pre></div>
 
 
-<p>不知道有没有更漂亮的代码。</p>	
-      
-      <h3 class="blogMeta">Par <a href="#">杨海祥</a>, Catégorie : <a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></h3>
-	<h3 class="blogMeta">Tags : <span><a href="http://scbzyhx.github.io/tag/c.html">C++，</a> / </span>
-</h3>
-    
-    </div><!-- end #blogItem -->
-<div class="blogItem">
-    
-      <h2>Commentaires</h2>
-<div id="disqus_thread"></div>
-    <script type="text/javascript">
-       var disqus_identifier = "swap-trap.html";
-       (function() {
-       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-       dsq.src = 'http://yhx.disqus.com/embed.js';
-       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-    </script>
-  </div>
-				
-				<!-- end #content -->
-  
-  </div><!-- end #mainContent -->
-
-<div class="clearfloat"></div>
-
-  <div id="footer">
-  
-    <p><a href="http://css4free.com/" title="free CSS web site designs">Free CSS Gallery</a></p>
-    <p>Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
-  </div><!-- end #footer -->
-
-</div><!-- end #container -->
+<p>不知道有没有更漂亮的代码。</p>
+			
+			<a href="https://twitter.com/share" class="twitter-share-button" data-via="" data-lang="en" data-size="large" data-related="">Tweet</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						
+			<div class="comments">
+			<h2>Comments !</h2>
+			    <div id="disqus_thread"></div>
+			    <script type="text/javascript">
+			       var disqus_identifier = "swap-trap.html";
+			       (function() {
+			       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			       dsq.src = '//yhx.disqus.com/embed.js';
+			       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			      })();
+			    </script>
+			</div>
+			
+		</div>
+	
+<div class="meta wrapper">
+	<time datetime="2015-06-13T00:00:00+08:00" pubdate>周六 13 六月 2015</time>
+	<ul class="tag clearfix">
+		<li><a href="http://scbzyhx.github.io/category/ri-zhi.html">日志</a></li>
+		<li><a href="http://scbzyhx.github.io/tag/c.html">C++，</a></li>
+	</ul>
+</div>	</article>	
+</div>
+	
+		
+<footer class="clearfix">
+	<div class="wrapper pages">
+		<ul class="nav">
+			<li><a href="http://scbzyhx.github.io/archives.html">Archive</a></li>
+		</ul>
+	</div>
+	
+	<div class="copy wrapper">
+		<ul class="social">
+			<li><a href="http://weibo.com/u/3445058592/">weibo</a></li>
+			<li><a href="http://github.com/scbzyhx">Github</a></li>
+		</ul>
+	
+		<p role="contentinfo">© 2012 scbzyhx<br>
+		Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a>.</p>
+	</div>
+</footer>
+	
+	<script>
+	  var _gaq=[['_setAccount',''],['_trackPageview']];
+	  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+	  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+	  s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
 </body>
 </html>
